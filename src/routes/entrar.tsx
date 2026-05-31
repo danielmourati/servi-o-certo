@@ -56,13 +56,13 @@ function EntrarPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-primary/10 via-info/5 to-accent/10 px-4">
+    <div className="app-bg flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md">
         <Link to="/" className="mb-6 flex items-center justify-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-brand text-white"><Wrench className="h-5 w-5" /></div>
-          <span className="font-display text-xl font-bold">Serviços<span className="text-primary">PRO</span></span>
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-blue text-white shadow-blue"><Wrench className="h-5 w-5" /></div>
+          <span className="font-display text-xl font-bold">Serviços<span className="text-gradient-blue">PRO</span></span>
         </Link>
-        <div className="rounded-2xl border border-border bg-card p-8 shadow-xl">
+        <div className="rounded-3xl border border-border bg-card p-8 shadow-card">
           <h1 className="font-display text-2xl font-bold">
             {mode === "signin" ? "Acessar conta" : "Criar conta"}
           </h1>
@@ -94,7 +94,7 @@ function EntrarPage() {
             <button
               type="submit"
               disabled={loading}
-              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-60"
+              className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-gradient-blue font-semibold text-white shadow-blue transition active:scale-[0.98] disabled:opacity-60"
             >
               {loading
                 ? <Loader2 className="h-4 w-4 animate-spin" />
