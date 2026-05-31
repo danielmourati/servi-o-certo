@@ -10,6 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SolicitarRouteImport } from './routes/solicitar'
+import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
+import { Route as RecuperarSenhaRouteImport } from './routes/recuperar-senha'
+import { Route as MinhaContaRouteImport } from './routes/minha-conta'
 import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as IndexRouteImport } from './routes/index'
@@ -28,6 +31,21 @@ import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 const SolicitarRoute = SolicitarRouteImport.update({
   id: '/solicitar',
   path: '/solicitar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RedefinirSenhaRoute = RedefinirSenhaRouteImport.update({
+  id: '/redefinir-senha',
+  path: '/redefinir-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RecuperarSenhaRoute = RecuperarSenhaRouteImport.update({
+  id: '/recuperar-senha',
+  path: '/recuperar-senha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MinhaContaRoute = MinhaContaRouteImport.update({
+  id: '/minha-conta',
+  path: '/minha-conta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EntrarRoute = EntrarRouteImport.update({
@@ -105,6 +123,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/entrar': typeof EntrarRoute
+  '/minha-conta': typeof MinhaContaRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/solicitar': typeof SolicitarRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
@@ -122,6 +143,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/entrar': typeof EntrarRoute
+  '/minha-conta': typeof MinhaContaRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/solicitar': typeof SolicitarRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
@@ -140,6 +164,9 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
   '/entrar': typeof EntrarRoute
+  '/minha-conta': typeof MinhaContaRoute
+  '/recuperar-senha': typeof RecuperarSenhaRoute
+  '/redefinir-senha': typeof RedefinirSenhaRoute
   '/solicitar': typeof SolicitarRoute
   '/admin/categorias': typeof AdminCategoriasRoute
   '/admin/configuracoes': typeof AdminConfiguracoesRoute
@@ -159,6 +186,9 @@ export interface FileRouteTypes {
     | '/'
     | '/como-funciona'
     | '/entrar'
+    | '/minha-conta'
+    | '/recuperar-senha'
+    | '/redefinir-senha'
     | '/solicitar'
     | '/admin/categorias'
     | '/admin/configuracoes'
@@ -176,6 +206,9 @@ export interface FileRouteTypes {
     | '/'
     | '/como-funciona'
     | '/entrar'
+    | '/minha-conta'
+    | '/recuperar-senha'
+    | '/redefinir-senha'
     | '/solicitar'
     | '/admin/categorias'
     | '/admin/configuracoes'
@@ -193,6 +226,9 @@ export interface FileRouteTypes {
     | '/'
     | '/como-funciona'
     | '/entrar'
+    | '/minha-conta'
+    | '/recuperar-senha'
+    | '/redefinir-senha'
     | '/solicitar'
     | '/admin/categorias'
     | '/admin/configuracoes'
@@ -211,6 +247,9 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
   EntrarRoute: typeof EntrarRoute
+  MinhaContaRoute: typeof MinhaContaRoute
+  RecuperarSenhaRoute: typeof RecuperarSenhaRoute
+  RedefinirSenhaRoute: typeof RedefinirSenhaRoute
   SolicitarRoute: typeof SolicitarRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
   AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
@@ -232,6 +271,27 @@ declare module '@tanstack/react-router' {
       path: '/solicitar'
       fullPath: '/solicitar'
       preLoaderRoute: typeof SolicitarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/redefinir-senha': {
+      id: '/redefinir-senha'
+      path: '/redefinir-senha'
+      fullPath: '/redefinir-senha'
+      preLoaderRoute: typeof RedefinirSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recuperar-senha': {
+      id: '/recuperar-senha'
+      path: '/recuperar-senha'
+      fullPath: '/recuperar-senha'
+      preLoaderRoute: typeof RecuperarSenhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/minha-conta': {
+      id: '/minha-conta'
+      path: '/minha-conta'
+      fullPath: '/minha-conta'
+      preLoaderRoute: typeof MinhaContaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/entrar': {
@@ -339,6 +399,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
   EntrarRoute: EntrarRoute,
+  MinhaContaRoute: MinhaContaRoute,
+  RecuperarSenhaRoute: RecuperarSenhaRoute,
+  RedefinirSenhaRoute: RedefinirSenhaRoute,
   SolicitarRoute: SolicitarRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
   AdminConfiguracoesRoute: AdminConfiguracoesRoute,
@@ -355,3 +418,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
