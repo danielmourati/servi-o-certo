@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ShieldCheck, MessageCircle, Clock, Users } from "lucide-react";
+import { ArrowRight, ShieldCheck, MessageCircle, Clock, Sparkles } from "lucide-react";
 import { PublicLayout } from "@/components/public-layout";
 import { CategoryIcon } from "@/components/category-icon";
 import { useStore } from "@/lib/store";
@@ -15,144 +15,147 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { categories } = useStore();
-  const featured = categories.filter(c => c.is_active).slice(0, 6);
+  const { categories, services } = useStore();
+  const active = categories.filter((c) => c.is_active).sort((a, b) => a.sort_order - b.sort_order);
+  const quickPick = active.slice(0, 8);
+  const featured = active.slice(0, 4);
 
   return (
     <PublicLayout>
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/10 via-info/5 to-accent/10" />
-        <div className="absolute -top-32 -right-32 -z-10 h-96 w-96 rounded-full bg-primary/20 blur-3xl" />
-        <div className="absolute -bottom-32 -left-32 -z-10 h-96 w-96 rounded-full bg-info/20 blur-3xl" />
-        <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 md:grid-cols-2 md:py-28">
-          <div className="flex flex-col justify-center">
-            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-              <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-              Atendimento local rápido
-            </span>
-            <h1 className="mt-5 font-display text-4xl font-bold leading-tight tracking-tight md:text-5xl lg:text-6xl">
-              Encontre profissionais para <span className="text-gradient-brand">reformas, reparos</span> e manutenção
-            </h1>
-            <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              Solicite serviços de pedreiro, eletricista, encanador, pintor, gesseiro e muito mais. Nossa equipe recebe seu pedido, entende sua necessidade e encaminha o profissional ideal.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/solicitar" className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 hover:opacity-90">
-                Solicitar orçamento <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link to="/categorias" className="inline-flex h-12 items-center rounded-xl border border-border bg-card px-6 text-sm font-semibold hover:bg-secondary">
-                Ver categorias
-              </Link>
-            </div>
-            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-              <span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary" /> Profissionais selecionados</span>
-              <span className="flex items-center gap-2"><Clock className="h-4 w-4 text-info" /> Resposta rápida</span>
-              <span className="flex items-center gap-2"><MessageCircle className="h-4 w-4 text-warning" /> Atendimento por WhatsApp</span>
-            </div>
-          </div>
-          <div className="relative hidden md:block">
-            <div className="absolute inset-0 rounded-3xl bg-gradient-brand opacity-20 blur-2xl" />
-            <div className="relative grid grid-cols-2 gap-4">
-              {featured.map((c, i) => (
-                <Link key={c.id} to="/categorias/$id" params={{ id: c.id }}
-                  className="group rounded-2xl border border-border bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
-                  style={{ transform: `translateY(${i % 2 === 0 ? "0" : "20px"})` }}>
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition">
-                    <CategoryIcon name={c.icon} className="h-5 w-5" />
-                  </div>
-                  <h3 className="mt-3 font-display text-base font-semibold">{c.name}</h3>
-                  <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{c.description}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
+      {/* Hero card */}
+      <section className="px-5 pt-4">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-blue p-6 text-white shadow-card">
+          <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/15 blur-2xl" />
+          <div className="absolute -bottom-12 -left-8 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider">
+            <Sparkles className="h-3 w-3" /> Atendimento rápido
+          </span>
+          <h1 className="mt-4 font-display text-2xl font-bold leading-tight">
+            Serviços de confiança<br />perto de você
+          </h1>
+          <p className="mt-2 max-w-[260px] text-sm text-white/90">
+            Solicite reformas, reparos e manutenção em minutos pelo WhatsApp.
+          </p>
+          <Link
+            to="/solicitar"
+            className="mt-5 inline-flex h-11 items-center gap-2 rounded-2xl bg-white px-5 text-sm font-semibold text-blue-600 shadow-lg transition active:scale-[0.97]"
+          >
+            Solicitar agora <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
-      {/* Categorias destaque */}
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
-          <div>
-            <h2 className="font-display text-3xl font-bold md:text-4xl">Categorias em destaque</h2>
-            <p className="mt-2 text-muted-foreground">Encontre o profissional certo para o seu projeto.</p>
-          </div>
-          <Link to="/categorias" className="text-sm font-semibold text-primary hover:underline">Ver todas →</Link>
+      {/* Quick categories grid */}
+      <section className="px-5 pt-7">
+        <div className="flex items-end justify-between">
+          <h2 className="font-display text-base font-bold">Selecione uma categoria</h2>
+          <Link to="/categorias" className="text-xs font-semibold text-blue-600">Ver todas</Link>
         </div>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.filter(c => c.is_active).slice(0, 6).map(c => (
-            <Link key={c.id} to="/categorias/$id" params={{ id: c.id }}
-              className="group flex items-start gap-4 rounded-2xl border border-border bg-card p-5 transition hover:border-primary hover:shadow-md">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-white">
+        <div className="mt-4 grid grid-cols-4 gap-3">
+          {quickPick.map((c) => (
+            <Link
+              key={c.id}
+              to="/categorias/$id"
+              params={{ id: c.id }}
+              className="group flex flex-col items-center gap-2 transition active:scale-95"
+            >
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-soft transition group-hover:bg-gradient-blue group-hover:text-white">
                 <CategoryIcon name={c.icon} className="h-6 w-6" />
               </div>
-              <div className="flex-1">
-                <h3 className="font-display text-lg font-semibold">{c.name}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{c.description}</p>
-                <span className="mt-3 inline-flex items-center text-sm font-semibold text-primary opacity-0 transition group-hover:opacity-100">
-                  Ver serviços <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                </span>
-              </div>
+              <span className="text-center text-[11px] font-medium leading-tight text-foreground line-clamp-2">
+                {c.name}
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Como funciona */}
-      <section className="border-y border-border bg-secondary/30 py-20">
-        <div className="mx-auto max-w-7xl px-4">
-          <h2 className="text-center font-display text-3xl font-bold md:text-4xl">Como funciona</h2>
-          <p className="mx-auto mt-2 max-w-xl text-center text-muted-foreground">Em quatro passos simples até o seu serviço resolvido.</p>
-          <div className="mt-12 grid gap-6 md:grid-cols-4">
-            {[
-              { n: "1", t: "Escolha o serviço", d: "Navegue pelas categorias e encontre o serviço que precisa." },
-              { n: "2", t: "Envie sua solicitação", d: "Preencha um formulário rápido com os detalhes." },
-              { n: "3", t: "Nossa equipe entra em contato", d: "Avaliamos seu pedido e encaminhamos o profissional ideal." },
-              { n: "4", t: "O profissional realiza o atendimento", d: "Você acompanha tudo pelo WhatsApp." },
-            ].map(s => (
-              <div key={s.n} className="relative rounded-2xl border border-border bg-card p-6">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-brand font-display text-base font-bold text-white">{s.n}</div>
-                <h3 className="mt-4 font-display text-lg font-semibold">{s.t}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{s.d}</p>
-              </div>
-            ))}
-          </div>
+      {/* Featured large cards */}
+      <section className="px-5 pt-8">
+        <div className="flex items-end justify-between">
+          <h2 className="font-display text-base font-bold">Categorias em destaque</h2>
+          <Link to="/categorias" className="text-xs font-semibold text-blue-600">Ver todas</Link>
+        </div>
+        <div className="mt-4 space-y-4">
+          {featured.map((c) => {
+            const count = services.filter((s) => s.category_id === c.id && s.is_active).length;
+            return (
+              <Link
+                key={c.id}
+                to="/categorias/$id"
+                params={{ id: c.id }}
+                className="group block overflow-hidden rounded-3xl border border-border bg-card shadow-soft transition active:scale-[0.98] hover:-translate-y-0.5"
+              >
+                <div className="flex items-stretch">
+                  <div className="relative flex w-28 shrink-0 items-center justify-center bg-gradient-blue text-white">
+                    <CategoryIcon name={c.icon} className="h-12 w-12 opacity-90" />
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.25),transparent_60%)]" />
+                  </div>
+                  <div className="flex-1 p-4">
+                    <h3 className="font-display text-base font-bold">{c.name}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{c.description}</p>
+                    <div className="mt-3 flex items-center justify-between">
+                      <span className="text-[11px] font-medium text-muted-foreground">{count} serviços</span>
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600">
+                        Ver <ArrowRight className="h-3 w-3" />
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
-      {/* Confiança */}
-      <section className="mx-auto max-w-7xl px-4 py-20">
-        <div className="grid gap-6 md:grid-cols-4">
+      {/* Trust strip */}
+      <section className="px-5 pt-8">
+        <div className="grid grid-cols-3 gap-3">
           {[
-            { i: ShieldCheck, t: "Profissionais selecionados", d: "Curadoria interna rigorosa." },
-            { i: Users, t: "Atendimento local", d: "Equipes prontas na sua cidade." },
-            { i: Clock, t: "Solicitação rápida", d: "Receba retorno em minutos." },
-            { i: MessageCircle, t: "Acompanhamento por WhatsApp", d: "Comunicação direta e ágil." },
+            { i: ShieldCheck, t: "Selecionados" },
+            { i: Clock, t: "Rápido" },
+            { i: MessageCircle, t: "WhatsApp" },
           ].map((s, i) => (
-            <div key={i} className="rounded-2xl border border-border bg-card p-6">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <s.i className="h-5 w-5" />
-              </div>
-              <h3 className="mt-4 font-display font-semibold">{s.t}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{s.d}</p>
+            <div key={i} className="flex flex-col items-center rounded-2xl border border-border bg-card p-3 shadow-soft">
+              <s.i className="h-5 w-5 text-blue-600" />
+              <span className="mt-1.5 text-[11px] font-semibold">{s.t}</span>
             </div>
           ))}
         </div>
       </section>
 
-      {/* CTA final */}
-      <section className="mx-auto max-w-7xl px-4 pb-20">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-brand p-10 md:p-14">
-          <div className="absolute inset-0 -z-10 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-            <div>
-              <h2 className="font-display text-3xl font-bold text-white md:text-4xl">Precisa de um reparo ou reforma?</h2>
-              <p className="mt-2 text-white/90">Solicite agora e nossa equipe entra em contato pelo WhatsApp.</p>
+      {/* How it works */}
+      <section className="px-5 pt-8">
+        <h2 className="font-display text-base font-bold">Como funciona</h2>
+        <div className="mt-4 space-y-3">
+          {[
+            { n: "1", t: "Escolha o serviço", d: "Navegue pelas categorias." },
+            { n: "2", t: "Envie sua solicitação", d: "Preencha um formulário rápido." },
+            { n: "3", t: "Recebemos seu pedido", d: "Encaminhamos o profissional ideal." },
+            { n: "4", t: "Atendimento confirmado", d: "Acompanhe tudo pelo WhatsApp." },
+          ].map((s) => (
+            <div key={s.n} className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-blue text-sm font-bold text-white">{s.n}</div>
+              <div>
+                <h3 className="font-display text-sm font-semibold">{s.t}</h3>
+                <p className="mt-0.5 text-xs text-muted-foreground">{s.d}</p>
+              </div>
             </div>
-            <Link to="/solicitar" className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 text-sm font-semibold text-primary shadow-lg hover:bg-white/90">
-              Solicitar serviço <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="px-5 pt-8">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-blue p-6 text-white shadow-card">
+          <h2 className="font-display text-lg font-bold">Pronto para começar?</h2>
+          <p className="mt-1 text-sm text-white/90">Receba retorno em minutos.</p>
+          <Link
+            to="/solicitar"
+            className="mt-4 inline-flex h-11 items-center gap-2 rounded-2xl bg-white px-5 text-sm font-semibold text-blue-600 transition active:scale-[0.97]"
+          >
+            Solicitar serviço <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
     </PublicLayout>
