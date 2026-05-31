@@ -17,7 +17,7 @@ export const Route = createFileRoute("/solicitar")({
 function SolicitarPage() {
   const navigate = useNavigate();
   const { service: preselected } = Route.useSearch();
-  const { categories, services, requests, setRequests } = useStore();
+  const { categories, services, mutations } = useStore();
 
   const initialService = services.find(s => s.id === preselected);
   const [categoryId, setCategoryId] = useState(initialService?.category_id ?? "");
