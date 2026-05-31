@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
-import { Building2, Phone, Mail, MapPin, DollarSign, Bell, Palette, Plug, Save, Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Building2, Phone, Mail, MapPin, DollarSign, Bell, Palette, Plug, Save, Loader2, Upload } from "lucide-react";
 import { AdminShell } from "@/components/admin-shell";
 import { requireAdminBeforeLoad } from "@/lib/admin-guard";
 import { getSettings, updateSettings } from "@/lib/settings.functions";
@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { MaskedInput } from "@/components/ui/masked-input";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/configuracoes")({
