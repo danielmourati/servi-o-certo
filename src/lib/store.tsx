@@ -5,7 +5,8 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 import { listCategories, upsertCategory, deleteCategory } from "./categories.functions";
 import { listServices, upsertService, deleteService } from "./services.functions";
@@ -20,6 +21,13 @@ export function formatBRL(v: number) {
 
 export function useStore() {
   const qc = useQueryClient();
+  const [hasSession, setHasSession] = useState(false);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setHasSession(!!data.session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setHasSession(!!s));
+    return () => subscription.unsubscribe();
+  }, []);
+
 
   const listCategoriesFn = useServerFn(listCategories);
   const listServicesFn = useServerFn(listServices);
@@ -40,8 +48,8 @@ export function useStore() {
   const servicesQ = useQuery({ queryKey: ["services"], queryFn: () => listServicesFn() });
   // Providers and requests are admin-only — these queries fail without an admin
   // session, but routes guarding them ensure that's only attempted from /admin.
-  const providersQ = useQuery({ queryKey: ["providers"], queryFn: () => listProvidersFn(), retry: false });
-  const requestsQ = useQuery({ queryKey: ["requests"], queryFn: () => listRequestsFn(), retry: false });
+  const providersQ = useQuery({ queryKey: ["providers"], queryFn: () => listProvidersFn(), retry: false, enabled: hasSession });
+  const requestsQ = useQuery({ queryKey: ["requests"], queryFn: () => listRequestsFn(), retry: false, enabled: hasSession });
 
   const categories = (categoriesQ.data ?? []) as Category[];
   const services = (servicesQ.data ?? []) as Service[];
