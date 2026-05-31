@@ -31,12 +31,12 @@ function TabItem({ to, icon: Icon, label, active }: { to: string; icon: any; lab
     >
       <div
         className={`flex h-10 w-10 items-center justify-center rounded-2xl transition-all ${
-          active ? "bg-gradient-blue text-white shadow-blue" : "text-muted-foreground group-hover:text-foreground"
+          active ? "bg-white text-blue-700 shadow-lg" : "text-white/80 group-hover:text-white"
         }`}
       >
         <Icon className="h-5 w-5" />
       </div>
-      <span className={`text-[10px] font-medium ${active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
+      <span className={`text-[10px] font-semibold ${active ? "text-white" : "text-white/80"}`}>{label}</span>
     </Link>
   );
 }
@@ -53,7 +53,7 @@ export function MobileTabBar() {
   const accountTo = authed ? "/minha-conta" : "/entrar";
   return (
     <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3 md:hidden">
-      <div className="pointer-events-auto flex w-full max-w-[440px] items-center justify-around rounded-3xl border border-border/60 bg-card/95 px-2 py-1 shadow-soft backdrop-blur">
+      <div className="pointer-events-auto flex w-full max-w-[440px] items-center justify-around rounded-3xl border border-white/20 bg-gradient-blue px-2 py-1 shadow-blue backdrop-blur">
         <TabItem to="/" icon={Home} label="Início" active={isActive("/") && path === "/"} />
         <TabItem to="/categorias" icon={LayoutGrid} label="Categorias" active={isActive("/categorias")} />
         <TabItem to="/solicitar" icon={PlusCircle} label="Solicitar" active={isActive("/solicitar")} />
