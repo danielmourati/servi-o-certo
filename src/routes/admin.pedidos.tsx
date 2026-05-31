@@ -9,12 +9,13 @@ const STATUSES: RequestStatus[] = ["Novo", "Em contato", "Orçado", "Atribuído"
 const PAY_STATUSES: PaymentStatus[] = ["Pendente", "Recebido", "Pago ao prestador", "Finalizado"];
 
 export const Route = createFileRoute("/admin/pedidos")({
+  beforeLoad: (await import("@/lib/admin-guard")).requireAdminBeforeLoad,
   head: () => ({ meta: [{ title: "Pedidos — Admin" }] }),
   component: PedidosPage,
 });
 
 function PedidosPage() {
-  const { requests, services, categories, providers, setRequests } = useStore();
+  const { requests, services, categories, providers, mutations } = useStore();
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selected, setSelected] = useState<string | null>(null);
@@ -34,7 +35,7 @@ function PedidosPage() {
 
   const update = (patch: Partial<ServiceRequest>) => {
     if (!current) return;
-    setRequests(requests.map(r => r.id === current.id ? { ...r, ...patch } : r));
+    mutations.updateRequest(current.id, patch);
   };
 
   return (
