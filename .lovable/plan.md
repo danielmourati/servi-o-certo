@@ -1,83 +1,50 @@
 ## Objetivo
+Adicionar uma camada de autenticação obrigatória no envio do formulário em `/solicitar`, com modal de alerta, preservação dos dados preenchidos e retomada automática do fluxo após login/cadastro.
 
-Transformar a vitrine pública (home, categorias, detalhe, solicitar, sucesso) em uma experiência **mobile-first estilo aplicativo**, inspirada na referência enviada. Em telas grandes, o conteúdo fica centralizado num "device frame" (max ~440px), com fundo neutro nas laterais.
+## Mudanças
 
-A área administrativa (`/admin/*`) **não é alterada**.
+### 1. `src/routes/solicitar.tsx`
+- Adicionar estado `session` via `supabase.auth.getSession()` + `onAuthStateChange`.
+- No `submit`:
+  1. Validar campos (igual hoje).
+  2. Se **não houver sessão**:
+     - Salvar o payload completo (categoryId, serviceId, form) em `sessionStorage` na chave `pending:request`.
+     - Abrir modal de alerta (estado local `showAuthModal`).
+  3. Se houver sessão: enviar normalmente.
+- Ao montar a página, se existir `pending:request` **e** houver sessão:
+  - Recuperar os dados, preencher o formulário, chamar `createRequest` automaticamente, limpar a chave e redirecionar para `/sucesso/$id`.
+- Toast final permanece "Solicitação enviada com sucesso! Em breve entraremos em contato pelo WhatsApp." (também já mostrado na tela `/sucesso/$id`).
 
-## Mudanças visuais (design system)
+### 2. Novo componente `src/components/auth-required-modal.tsx`
+Modal reutilizável usando `Dialog` do shadcn já presente no projeto:
+- Título: "Opss... você precisa estar logado para concluir sua solicitação."
+- Descrição: "Entre na sua conta ou cadastre-se gratuitamente para finalizar o envio do seu pedido."
+- Dois botões:
+  - **Entrar** → `navigate({ to: "/entrar", search: { mode: "signin", redirect: "/solicitar" } })`
+  - **Criar conta** → `navigate({ to: "/entrar", search: { mode: "signup", redirect: "/solicitar" } })`
+- Botão "Criar conta" estilizado com `bg-gradient-blue`.
 
-Em `src/styles.css`:
-- Novo gradiente azul principal `--gradient-blue` (ex.: `#3B82F6 → #06B6D4`) — usado em botões CTA, badges e card de banner.
-- Tokens auxiliares: `--shadow-soft`, `--shadow-card`, `--radius` aumentado para `1.25rem` (cards bem arredondados).
-- Tipografia limpa mantida (Plus Jakarta + Inter).
-- Utilitários: `.bg-gradient-blue`, `.shadow-soft`, `.app-shell` (max-w-[440px] mx-auto bg-background min-h-screen com sombras laterais em telas grandes).
+### 3. `src/routes/entrar.tsx`
+- Adicionar `validateSearch` para aceitar `mode` (`signin` | `signup`) e `redirect` (string opcional).
+- Inicializar `mode` a partir da search param.
+- Após login/cadastro bem-sucedido, se `search.redirect` existir, navegar para essa rota; caso contrário manter o comportamento atual (`/admin/dashboard`).
+- Após signup com confirmação de email pendente, continuar exibindo o toast atual (sem auto-login).
+- Pré-popular email/senha vazios quando vier do fluxo `/solicitar` (em vez do default admin).
 
-## Novo layout público
+### 4. Sem mudanças no backend
+A função `createRequest` continua igual. A regra de autenticação é apenas no client (RLS já existente protege o backend).
 
-### `src/components/public-layout.tsx` (reescrito)
-- Remove header desktop / nav horizontal.
-- Wrapper `AppShell`: container centralizado `max-w-[440px]`, fundo cinza claro fora, fundo card dentro, sombra suave, padding-bottom para acomodar a tab bar.
-- **Top bar mobile**: localização "Olá!" + ícones (busca, notificação) — apenas visual.
-- **Bottom navigation fixa** (`MobileTabBar`) com 4 itens:
-  - Início (`/`)
-  - Categorias (`/categorias`)
-  - Solicitar (`/solicitar`) — botão central destacado em gradiente azul
-  - Entrar/Admin (`/entrar`)
-  - Item ativo em gradiente azul, com animação suave (scale/opacity).
+## Detalhes técnicos
+- Chave de persistência: `sessionStorage` (limpa ao fechar aba; suficiente para o fluxo).
+- Estrutura salva:
+  ```ts
+  { categoryId, serviceId, form, savedAt: number }
+  ```
+- Expiração leve: ignorar se `savedAt` tiver mais de 1 hora.
+- Limpar `sessionStorage.removeItem("pending:request")` após envio bem-sucedido **ou** quando o usuário editar e reenviar manualmente.
+- A rota `/cadastro` solicitada não existe e seria um duplicado de `/entrar` (que já tem toggle signin/signup). Vou reutilizar `/entrar?mode=signup` em vez de criar `/cadastro`, mantendo uma única tela de auth.
 
-### `src/routes/index.tsx` (home reescrita)
-Seguindo a referência:
-1. **Hero card** com gradiente azul e ilustração: título "Serviços de confiança", subtítulo, CTA "Solicitar agora" (botão branco com texto gradiente).
-2. **"Selecione uma categoria"** — grid 4 colunas de ícones circulares com label embaixo (todas as categorias ativas, scroll horizontal se passar de 8).
-3. **"Categorias em destaque"** — lista vertical de cards grandes com:
-   - Imagem ilustrativa (gradiente + ícone grande como placeholder).
-   - Nome, descrição curta, quantidade de serviços.
-   - Botão "Ver serviços" gradiente azul.
-4. **"Como funciona"** — 4 passos compactos em cards arredondados.
-5. **CTA final** em card gradiente azul.
-
-**Nada de listagem de profissionais individuais** na home.
-
-### `src/routes/categorias.index.tsx` (reescrita mobile-first)
-- Header "Categorias" com voltar.
-- Grid 2 colunas de cards arredondados grandes (ícone em círculo gradiente, nome, contagem de serviços), com tap animation (`active:scale-[0.97]`).
-
-### `src/routes/categorias.$id.tsx` (revisada)
-- Mantém a lógica; aplica visual app: card de categoria no topo, lista vertical de serviços com cards arredondados e botão "Solicitar".
-
-### `src/routes/solicitar.tsx` e `src/routes/sucesso.$id.tsx`
-- Apenas ajustes visuais: padding generoso, cards arredondados, botão CTA em gradiente azul, sem alteração de lógica/serverFns.
-
-### `src/routes/entrar.tsx`
-- Mantém lógica de login; apenas visual app-style (card centralizado, botão gradiente).
-
-## Animações
-
-- Tailwind `transition-transform active:scale-[0.97] hover:-translate-y-0.5` nos cards.
-- Tab bar ativa com `transition-colors` e indicador gradiente.
-- Hero pulse sutil opcional (sem dependências novas, só Tailwind).
-
-## Comportamento responsivo
-
-- `< 440px`: ocupa tela inteira.
-- `≥ 440px`: container central com sombra lateral; o resto da viewport mostra fundo neutro (`bg-muted/40`).
-- Tab bar segue presa ao fundo do container (`fixed` no mobile, `sticky bottom-0` dentro do shell em desktop) — sempre visível.
-
-## Arquivos afetados
-
-- `src/styles.css` — tokens de gradiente azul, sombras, raio.
-- `src/components/public-layout.tsx` — reescrito (AppShell + TabBar + TopBar).
-- `src/routes/index.tsx` — reescrito.
-- `src/routes/categorias.index.tsx` — reescrito.
-- `src/routes/categorias.$id.tsx` — refinado.
-- `src/routes/solicitar.tsx` — refinado visual.
-- `src/routes/sucesso.$id.tsx` — refinado visual.
-- `src/routes/entrar.tsx` — refinado visual.
-
-Nenhuma mudança em backend, server functions, schema ou rotas `/admin/*`.
-
-## Validação
-
-- Conferir preview a 390px (mobile) e 1280px (desktop centralizado).
-- Tab bar visível em todas as páginas públicas; rotas admin não exibem tab bar.
-- Categorias e contadores carregam do Supabase via `useStore()`.
+## Fora de escopo
+- Mudanças em outros fluxos admin.
+- Criar uma rota separada `/cadastro` (reutilizamos `/entrar`).
+- Alterar a tela `/sucesso/$id` (já mostra a mensagem desejada).

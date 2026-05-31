@@ -1,12 +1,31 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { ArrowLeft } from "lucide-react";
 import { PublicLayout } from "@/components/public-layout";
+import { AuthRequiredModal } from "@/components/auth-required-modal";
 import { useStore } from "@/lib/store";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const searchSchema = z.object({ service: z.string().optional() });
+const PENDING_KEY = "pending:request";
+const PENDING_TTL_MS = 60 * 60 * 1000; // 1h
+
+type PendingPayload = {
+  categoryId: string;
+  serviceId: string;
+  form: FormState;
+  savedAt: number;
+};
+
+type FormState = {
+  client_name: string; client_phone: string; client_address: string;
+  client_neighborhood: string; client_city: string;
+  preferred_date: string; preferred_time: string;
+  urgency: "Normal" | "Urgente" | "Emergencial";
+  description: string;
+};
 
 export const Route = createFileRoute("/solicitar")({
   head: () => ({ meta: [{ title: "Solicitar serviço — ServiçosPRO" }] }),
@@ -22,13 +41,64 @@ function SolicitarPage() {
   const initialService = services.find(s => s.id === preselected);
   const [categoryId, setCategoryId] = useState(initialService?.category_id ?? "");
   const [serviceId, setServiceId] = useState(initialService?.id ?? "");
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormState>({
     client_name: "", client_phone: "", client_address: "",
     client_neighborhood: "", client_city: "",
     preferred_date: "", preferred_time: "",
-    urgency: "Normal" as "Normal" | "Urgente" | "Emergencial",
+    urgency: "Normal",
     description: "",
   });
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [hasSession, setHasSession] = useState<boolean | null>(null);
+  const autoSubmitted = useRef(false);
+
+  // Track auth session
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setHasSession(!!data.session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setHasSession(!!s));
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Restore pending payload (preserve form data across login)
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(PENDING_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as PendingPayload;
+      if (!parsed?.savedAt || Date.now() - parsed.savedAt > PENDING_TTL_MS) {
+        sessionStorage.removeItem(PENDING_KEY);
+        return;
+      }
+      setCategoryId(parsed.categoryId);
+      setServiceId(parsed.serviceId);
+      setForm(parsed.form);
+    } catch {}
+  }, []);
+
+  // After login, auto-submit the pending request
+  useEffect(() => {
+    if (hasSession !== true || autoSubmitted.current) return;
+    const raw = sessionStorage.getItem(PENDING_KEY);
+    if (!raw) return;
+    autoSubmitted.current = true;
+    (async () => {
+      try {
+        const parsed = JSON.parse(raw) as PendingPayload;
+        const created = await mutations.createRequest({
+          service_id: parsed.serviceId,
+          category_id: parsed.categoryId,
+          ...parsed.form,
+        });
+        try { sessionStorage.setItem(`req:${created.id}`, JSON.stringify(created)); } catch {}
+        sessionStorage.removeItem(PENDING_KEY);
+        toast.success("Solicitação enviada com sucesso!");
+        navigate({ to: "/sucesso/$id", params: { id: created.id } });
+      } catch (err: any) {
+        autoSubmitted.current = false;
+        toast.error(err?.message ?? "Não foi possível concluir a solicitação.");
+      }
+    })();
+  }, [hasSession, mutations, navigate]);
 
   const filteredServices = services.filter(s => s.category_id === categoryId && s.is_active);
   const activeCategories = categories.filter(c => c.is_active);
@@ -37,13 +107,22 @@ function SolicitarPage() {
     e.preventDefault();
     if (!categoryId || !serviceId) { toast.error("Selecione uma categoria e um serviço."); return; }
     if (!form.client_name || !form.client_phone) { toast.error("Preencha nome e telefone."); return; }
+
+    // Auth gate
+    if (!hasSession) {
+      const payload: PendingPayload = { categoryId, serviceId, form, savedAt: Date.now() };
+      try { sessionStorage.setItem(PENDING_KEY, JSON.stringify(payload)); } catch {}
+      setShowAuthModal(true);
+      return;
+    }
+
     try {
       const created = await mutations.createRequest({
         service_id: serviceId, category_id: categoryId, ...form,
       });
-      try {
-        sessionStorage.setItem(`req:${created.id}`, JSON.stringify(created));
-      } catch {}
+      try { sessionStorage.setItem(`req:${created.id}`, JSON.stringify(created)); } catch {}
+      sessionStorage.removeItem(PENDING_KEY);
+      toast.success("Solicitação enviada com sucesso!");
       navigate({ to: "/sucesso/$id", params: { id: created.id } });
     } catch (err: any) {
       toast.error(err?.message ?? "Não foi possível enviar a solicitação.");
@@ -113,6 +192,9 @@ function SolicitarPage() {
           </button>
         </form>
       </div>
+
+      <AuthRequiredModal open={showAuthModal} onOpenChange={setShowAuthModal} redirectTo="/solicitar" />
+
       <style>{`.input { width:100%; height:44px; border:1px solid var(--color-border); background:var(--color-background); padding:0 14px; border-radius:14px; font-size:14px; outline:none; transition: border-color .15s, box-shadow .15s; }
       .input:focus { border-color: #3B82F6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
       textarea.input { height: auto; padding: 12px 14px; }`}</style>
