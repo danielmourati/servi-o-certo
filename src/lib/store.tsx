@@ -48,8 +48,8 @@ export function useStore() {
   const servicesQ = useQuery({ queryKey: ["services"], queryFn: () => listServicesFn() });
   // Providers and requests are admin-only — these queries fail without an admin
   // session, but routes guarding them ensure that's only attempted from /admin.
-  const providersQ = useQuery({ queryKey: ["providers"], queryFn: () => listProvidersFn(), retry: false });
-  const requestsQ = useQuery({ queryKey: ["requests"], queryFn: () => listRequestsFn(), retry: false });
+  const providersQ = useQuery({ queryKey: ["providers"], queryFn: () => listProvidersFn(), retry: false, enabled: hasSession });
+  const requestsQ = useQuery({ queryKey: ["requests"], queryFn: () => listRequestsFn(), retry: false, enabled: hasSession });
 
   const categories = (categoriesQ.data ?? []) as Category[];
   const services = (servicesQ.data ?? []) as Service[];
