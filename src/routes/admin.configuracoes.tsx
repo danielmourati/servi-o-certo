@@ -62,6 +62,8 @@ function SettingsPage() {
   const [form, setForm] = useState<SettingsForm>(empty);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchSettings()
