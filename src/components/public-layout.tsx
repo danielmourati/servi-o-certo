@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { BrandLogo } from "@/components/brand-logo";
 import { DesktopHeader } from "@/components/desktop-header";
 import { SiteFooter } from "@/components/site-footer";
+import { LgpdModal } from "@/components/lgpd-modal";
 import { supabase } from "@/integrations/supabase/client";
 
 export function AppTopBar({ title, subtitle }: { title?: string; subtitle?: string }) {
@@ -76,6 +77,9 @@ export function PublicLayout({ children, topBar }: { children: ReactNode; topBar
       <div className="relative mx-auto flex min-h-screen w-full max-w-[440px] flex-col bg-background shadow-soft md:hidden">
         {topBar ?? <AppTopBar />}
         <main className="flex-1 pb-32">{children}</main>
+        <div className="flex justify-center pb-28 pt-2">
+          <LgpdModal />
+        </div>
       </div>
       <MobileTabBar />
     </div>

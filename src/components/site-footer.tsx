@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Facebook, Linkedin, MessageCircle, Mail, MapPin, Phone } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
+import { LgpdModal } from "@/components/lgpd-modal";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
@@ -62,7 +63,11 @@ export function SiteFooter() {
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-[1200px] flex-col items-center justify-between gap-2 px-6 py-4 text-xs text-muted-foreground md:flex-row">
           <span>© {year} KebraGalho. Todos os direitos reservados.</span>
-          <span>Feito com cuidado para o seu dia a dia.</span>
+          <div className="flex items-center gap-3">
+            <LgpdModal />
+            <span className="text-border">|</span>
+            <span>Feito com cuidado para o seu dia a dia.</span>
+          </div>
         </div>
       </div>
     </footer>
