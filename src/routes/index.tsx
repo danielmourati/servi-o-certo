@@ -24,18 +24,18 @@ function Index() {
   return (
     <PublicLayout>
       {/* Hero carousel */}
-      <section className="px-5 pt-4">
+      <section className="px-5 pt-4 md:px-0 md:pt-0">
         <HeroCarousel />
       </section>
 
 
       {/* Quick categories grid */}
-      <section className="px-5 pt-7">
+      <section className="px-5 pt-7 md:px-0 md:pt-12">
         <div className="flex items-end justify-between">
-          <h2 className="font-display text-base font-bold">Selecione uma categoria</h2>
-          <Link to="/categorias" className="text-xs font-semibold text-blue-600">Ver todas</Link>
+          <h2 className="font-display text-base font-bold md:text-2xl">Selecione uma categoria</h2>
+          <Link to="/categorias" className="text-xs font-semibold text-blue-600 md:text-sm">Ver todas</Link>
         </div>
-        <div className="mt-4 grid grid-cols-4 gap-3">
+        <div className="mt-4 grid grid-cols-4 gap-3 md:mt-6 md:grid-cols-8 md:gap-4">
           {quickPick.map((c) => (
             <Link
               key={c.id}
@@ -43,10 +43,10 @@ function Index() {
               params={{ id: c.id }}
               className="group flex flex-col items-center gap-2 transition active:scale-95"
             >
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-soft transition group-hover:bg-gradient-blue group-hover:text-white">
-                <CategoryIcon name={c.icon} className="h-6 w-6" />
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 shadow-soft transition group-hover:bg-gradient-blue group-hover:text-white md:h-20 md:w-20">
+                <CategoryIcon name={c.icon} className="h-6 w-6 md:h-8 md:w-8" />
               </div>
-              <span className="text-center text-[11px] font-medium leading-tight text-foreground line-clamp-2">
+              <span className="text-center text-[11px] font-medium leading-tight text-foreground line-clamp-2 md:text-sm">
                 {c.name}
               </span>
             </Link>
@@ -55,12 +55,12 @@ function Index() {
       </section>
 
       {/* Featured large cards */}
-      <section className="px-5 pt-8">
+      <section className="px-5 pt-8 md:px-0 md:pt-14">
         <div className="flex items-end justify-between">
-          <h2 className="font-display text-base font-bold">Categorias em destaque</h2>
-          <Link to="/categorias" className="text-xs font-semibold text-blue-600">Ver todas</Link>
+          <h2 className="font-display text-base font-bold md:text-2xl">Categorias em destaque</h2>
+          <Link to="/categorias" className="text-xs font-semibold text-blue-600 md:text-sm">Ver todas</Link>
         </div>
-        <div className="mt-4 space-y-4">
+        <div className="mt-4 space-y-4 md:mt-6 md:grid md:grid-cols-2 md:gap-5 md:space-y-0">
           {featured.map((c) => {
             const count = services.filter((s) => s.category_id === c.id && s.is_active).length;
             return (
@@ -93,36 +93,36 @@ function Index() {
       </section>
 
       {/* Trust strip */}
-      <section className="px-5 pt-8">
-        <div className="grid grid-cols-3 gap-3">
+      <section className="px-5 pt-8 md:px-0 md:pt-14">
+        <div className="grid grid-cols-3 gap-3 md:gap-5">
           {[
             { i: ShieldCheck, t: "Selecionados" },
             { i: Clock, t: "Rápido" },
             { i: MessageCircle, t: "WhatsApp" },
           ].map((s, i) => (
-            <div key={i} className="flex flex-col items-center rounded-2xl border border-border bg-card p-3 shadow-soft">
-              <s.i className="h-5 w-5 text-blue-600" />
-              <span className="mt-1.5 text-[11px] font-semibold">{s.t}</span>
+            <div key={i} className="flex flex-col items-center rounded-2xl border border-border bg-card p-3 shadow-soft md:flex-row md:gap-3 md:p-5">
+              <s.i className="h-5 w-5 text-blue-600 md:h-7 md:w-7" />
+              <span className="mt-1.5 text-[11px] font-semibold md:mt-0 md:text-base">{s.t}</span>
             </div>
           ))}
         </div>
       </section>
 
       {/* How it works */}
-      <section className="px-5 pt-8">
-        <h2 className="font-display text-base font-bold">Como funciona</h2>
-        <div className="mt-4 space-y-3">
+      <section className="px-5 pt-8 md:px-0 md:pt-14">
+        <h2 className="font-display text-base font-bold md:text-2xl">Como funciona</h2>
+        <div className="mt-4 space-y-3 md:mt-6 md:grid md:grid-cols-4 md:gap-4 md:space-y-0">
           {[
             { n: "1", t: "Escolha o serviço", d: "Navegue pelas categorias." },
             { n: "2", t: "Envie sua solicitação", d: "Preencha um formulário rápido." },
             { n: "3", t: "Recebemos seu pedido", d: "Encaminhamos o profissional ideal." },
             { n: "4", t: "Atendimento confirmado", d: "Acompanhe tudo pelo WhatsApp." },
           ].map((s) => (
-            <div key={s.n} className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft">
+            <div key={s.n} className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft md:flex-col md:gap-4">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-blue text-sm font-bold text-white">{s.n}</div>
               <div>
-                <h3 className="font-display text-sm font-semibold">{s.t}</h3>
-                <p className="mt-0.5 text-xs text-muted-foreground">{s.d}</p>
+                <h3 className="font-display text-sm font-semibold md:text-base">{s.t}</h3>
+                <p className="mt-0.5 text-xs text-muted-foreground md:text-sm">{s.d}</p>
               </div>
             </div>
           ))}
@@ -130,13 +130,13 @@ function Index() {
       </section>
 
       {/* Final CTA */}
-      <section className="px-5 pt-8">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-blue p-6 text-white shadow-card">
-          <h2 className="font-display text-lg font-bold">Pronto para começar?</h2>
-          <p className="mt-1 text-sm text-white/90">Receba retorno em minutos.</p>
+      <section className="px-5 pt-8 md:px-0 md:pt-14 md:pb-4">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-blue p-6 text-white shadow-card md:p-10">
+          <h2 className="font-display text-lg font-bold md:text-3xl">Pronto para começar?</h2>
+          <p className="mt-1 text-sm text-white/90 md:text-base">Receba retorno em minutos.</p>
           <Link
             to="/solicitar"
-            className="mt-4 inline-flex h-11 items-center gap-2 rounded-2xl bg-white px-5 text-sm font-semibold text-blue-600 transition active:scale-[0.97]"
+            className="mt-4 inline-flex h-11 items-center gap-2 rounded-2xl bg-white px-5 text-sm font-semibold text-blue-600 transition active:scale-[0.97] md:h-12 md:text-base"
           >
             Solicitar serviço <ArrowRight className="h-4 w-4" />
           </Link>
