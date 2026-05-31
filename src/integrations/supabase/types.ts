@@ -110,6 +110,48 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          address: string
+          avatar_url: string
+          birth_date: string | null
+          city: string
+          cpf: string
+          created_at: string
+          full_name: string
+          id: string
+          neighborhood: string
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string
+          avatar_url?: string
+          birth_date?: string | null
+          city?: string
+          cpf?: string
+          created_at?: string
+          full_name?: string
+          id: string
+          neighborhood?: string
+          phone?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string
+          avatar_url?: string
+          birth_date?: string | null
+          city?: string
+          cpf?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          neighborhood?: string
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       provider_categories: {
         Row: {
           category_id: string
