@@ -59,7 +59,7 @@ function CategoriasAdmin() {
             <p className="mt-3 text-sm text-muted-foreground">{c.description}</p>
             <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
               <span>Ordem: {c.sort_order}</span>
-              <button onClick={() => toggle(c.id)} className="text-primary hover:underline">{c.is_active ? "Inativar" : "Ativar"}</button>
+              <button onClick={() => toggle(c)} className="text-primary hover:underline">{c.is_active ? "Inativar" : "Ativar"}</button>
             </div>
           </div>
         ))}
