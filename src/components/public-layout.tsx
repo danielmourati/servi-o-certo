@@ -1,73 +1,66 @@
-import { Link } from "@tanstack/react-router";
-import { Menu, X, Wrench } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { Home, LayoutGrid, PlusCircle, UserCircle2, Wrench } from "lucide-react";
+import type { ReactNode } from "react";
 
-export function PublicHeader() {
-  const [open, setOpen] = useState(false);
+export function AppTopBar({ title, subtitle }: { title?: string; subtitle?: string }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4">
+    <header className="sticky top-0 z-30 bg-card/80 px-5 pt-5 pb-3 backdrop-blur">
+      <div className="flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-brand text-white shadow-sm">
-            <Wrench className="h-5 w-5" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-blue text-white shadow-blue">
+            <Wrench className="h-4 w-4" />
           </div>
-          <span className="font-display text-lg font-bold">Serviços<span className="text-primary">PRO</span></span>
+          <div className="leading-tight">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{subtitle ?? "Olá, bem-vindo"}</div>
+            <div className="font-display text-sm font-bold">{title ?? "ServiçosPRO"}</div>
+          </div>
         </Link>
-        <nav className="hidden items-center gap-8 md:flex">
-          <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground" activeOptions={{ exact: true }} activeProps={{ className: "text-foreground" }}>Início</Link>
-          <Link to="/categorias" className="text-sm font-medium text-muted-foreground hover:text-foreground" activeProps={{ className: "text-foreground" }}>Serviços</Link>
-          <Link to="/como-funciona" className="text-sm font-medium text-muted-foreground hover:text-foreground" activeProps={{ className: "text-foreground" }}>Como funciona</Link>
-          <Link to="/solicitar" className="text-sm font-medium text-muted-foreground hover:text-foreground" activeProps={{ className: "text-foreground" }}>Solicitar orçamento</Link>
-        </nav>
-        <div className="hidden md:flex items-center gap-3">
-          <Link to="/entrar" className="text-sm text-muted-foreground hover:text-foreground">Admin</Link>
-          <Link to="/solicitar" className="inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90">Solicitar serviço</Link>
-        </div>
-        <button className="md:hidden" onClick={() => setOpen(!open)} aria-label="Menu">
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
       </div>
-      {open && (
-        <div className="md:hidden border-t border-border bg-background">
-          <div className="flex flex-col gap-1 px-4 py-3">
-            <Link to="/" onClick={() => setOpen(false)} className="py-2 text-sm font-medium">Início</Link>
-            <Link to="/categorias" onClick={() => setOpen(false)} className="py-2 text-sm font-medium">Serviços</Link>
-            <Link to="/como-funciona" onClick={() => setOpen(false)} className="py-2 text-sm font-medium">Como funciona</Link>
-            <Link to="/solicitar" onClick={() => setOpen(false)} className="py-2 text-sm font-medium">Solicitar orçamento</Link>
-            <Link to="/entrar" onClick={() => setOpen(false)} className="py-2 text-sm font-medium">Admin</Link>
-            <Link to="/solicitar" onClick={() => setOpen(false)} className="mt-2 inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Solicitar serviço</Link>
-          </div>
-        </div>
-      )}
     </header>
   );
 }
 
-export function PublicFooter() {
+function TabItem({ to, icon: Icon, label, active }: { to: string; icon: any; label: string; active: boolean }) {
   return (
-    <footer className="border-t border-border bg-secondary/40">
-      <div className="mx-auto max-w-7xl px-4 py-10 text-sm text-muted-foreground">
-        <div className="flex flex-col items-start justify-between gap-6 md:flex-row">
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-white"><Wrench className="h-4 w-4" /></div>
-              <span className="font-display text-base font-bold text-foreground">ServiçosPRO</span>
-            </div>
-            <p className="mt-2 max-w-sm">Conectamos você aos melhores profissionais para reformas, reparos e manutenção.</p>
-          </div>
-          <div className="text-xs">© {new Date().getFullYear()} ServiçosPRO. Todos os direitos reservados.</div>
-        </div>
+    <Link
+      to={to}
+      className="group flex flex-1 flex-col items-center justify-center gap-1 py-2 transition active:scale-95"
+    >
+      <div
+        className={`flex h-10 w-10 items-center justify-center rounded-2xl transition-all ${
+          active ? "bg-gradient-blue text-white shadow-blue" : "text-muted-foreground group-hover:text-foreground"
+        }`}
+      >
+        <Icon className="h-5 w-5" />
       </div>
-    </footer>
+      <span className={`text-[10px] font-medium ${active ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
+    </Link>
   );
 }
 
-export function PublicLayout({ children }: { children: ReactNode }) {
+export function MobileTabBar() {
+  const path = useRouterState({ select: (s) => s.location.pathname });
+  const isActive = (p: string) => (p === "/" ? path === "/" : path.startsWith(p));
   return (
-    <div className="flex min-h-screen flex-col">
-      <PublicHeader />
-      <main className="flex-1">{children}</main>
-      <PublicFooter />
+    <nav className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-3 pb-3">
+      <div className="pointer-events-auto flex w-full max-w-[440px] items-center justify-around rounded-3xl border border-border/60 bg-card/95 px-2 py-1 shadow-soft backdrop-blur">
+        <TabItem to="/" icon={Home} label="Início" active={isActive("/") && path === "/"} />
+        <TabItem to="/categorias" icon={LayoutGrid} label="Categorias" active={isActive("/categorias")} />
+        <TabItem to="/solicitar" icon={PlusCircle} label="Solicitar" active={isActive("/solicitar")} />
+        <TabItem to="/entrar" icon={UserCircle2} label="Conta" active={isActive("/entrar")} />
+      </div>
+    </nav>
+  );
+}
+
+export function PublicLayout({ children, topBar }: { children: ReactNode; topBar?: ReactNode }) {
+  return (
+    <div className="app-bg min-h-screen">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-[440px] flex-col bg-background shadow-soft md:my-4 md:min-h-[calc(100vh-2rem)] md:rounded-[2rem] md:overflow-hidden">
+        {topBar ?? <AppTopBar />}
+        <main className="flex-1 pb-32">{children}</main>
+      </div>
+      <MobileTabBar />
     </div>
   );
 }
