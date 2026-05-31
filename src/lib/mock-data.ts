@@ -74,3 +74,9 @@ export type ServiceRequest = {
 };
 
 export const ADMIN_WHATSAPP = "5599999999999";
+
+// Fallbacks vazios — dados reais virão do banco no próximo turno
+export const initialCategories: Category[] = [];
+export const initialServices: Service[] = [];
+export const initialProviders: Provider[] = [];
+export const initialRequests: ServiceRequest[] = [];
