@@ -2,8 +2,9 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   LayoutDashboard, ClipboardList, FolderTree, Hammer, Users,
-  DollarSign, Settings, Wrench, Menu, X, LogOut, Bell,
+  DollarSign, Settings, Menu, X, LogOut, Bell,
 } from "lucide-react";
+import logoUrl from "@/assets/logo.png";
 
 const navItems = [
   { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
