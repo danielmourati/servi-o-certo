@@ -41,6 +41,9 @@ function SolicitarPage() {
       const created = await mutations.createRequest({
         service_id: serviceId, category_id: categoryId, ...form,
       });
+      try {
+        sessionStorage.setItem(`req:${created.id}`, JSON.stringify(created));
+      } catch {}
       navigate({ to: "/sucesso/$id", params: { id: created.id } });
     } catch (err: any) {
       toast.error(err?.message ?? "Não foi possível enviar a solicitação.");
