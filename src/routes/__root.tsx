@@ -1,4 +1,4 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import {
   Outlet,
   createRootRouteWithContext,
@@ -10,7 +10,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { StoreProvider } from "../lib/store";
+import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -47,8 +47,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ServiçosPRO — Profissionais para reformas, reparos e manutenção" },
+      { title: "KebraGalho - Profissionais para reparos e manutenção." },
       { name: "description", content: "Solicite pedreiro, eletricista, encanador, pintor e mais. Atendimento rápido pelo WhatsApp." },
+      { property: "og:title", content: "KebraGalho - Profissionais para reparos e manutenção." },
+      { name: "twitter:title", content: "KebraGalho - Profissionais para reparos e manutenção." },
+      { property: "og:description", content: "Solicite pedreiro, eletricista, encanador, pintor e mais. Atendimento rápido pelo WhatsApp." },
+      { name: "twitter:description", content: "Solicite pedreiro, eletricista, encanador, pintor e mais. Atendimento rápido pelo WhatsApp." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9dc38942-d9cb-4dff-bfde-afc9f75f1a73/id-preview-22d33fb8--20cb32b0-d1e6-40d8-9e01-5e7632457457.lovable.app-1780243811408.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/9dc38942-d9cb-4dff-bfde-afc9f75f1a73/id-preview-22d33fb8--20cb32b0-d1e6-40d8-9e01-5e7632457457.lovable.app-1780243811408.png" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -72,14 +80,26 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function AuthSync() {
+  const router = useRouter();
+  const qc = useQueryClient();
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      router.invalidate();
+      qc.invalidateQueries();
+    });
+    return () => subscription.unsubscribe();
+  }, [router, qc]);
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <StoreProvider>
-        <Outlet />
-        <Toaster />
-      </StoreProvider>
+      <AuthSync />
+      <Outlet />
+      <Toaster />
     </QueryClientProvider>
   );
 }

@@ -3,9 +3,12 @@ import { useState } from "react";
 import { Plus, Trash2, Pencil, X } from "lucide-react";
 import { AdminShell, StatusBadge } from "@/components/admin-shell";
 import { useStore } from "@/lib/store";
+import { requireAdminBeforeLoad } from "@/lib/admin-guard";
+import { toast } from "sonner";
 import type { Service } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/admin/servicos")({
+  beforeLoad: requireAdminBeforeLoad,
   head: () => ({ meta: [{ title: "Serviços — Admin" }] }),
   component: ServicosAdmin,
 });
@@ -13,16 +16,18 @@ export const Route = createFileRoute("/admin/servicos")({
 const empty: Service = { id: "", category_id: "", name: "", description: "", is_active: true };
 
 function ServicosAdmin() {
-  const { services, categories, setServices } = useStore();
+  const { services, categories, mutations } = useStore();
   const [editing, setEditing] = useState<Service | null>(null);
   const [filter, setFilter] = useState("all");
 
-  const save = (s: Service) => {
-    if (s.id) setServices(services.map(x => x.id === s.id ? s : x));
-    else setServices([...services, { ...s, id: `srv-${Date.now()}` }]);
-    setEditing(null);
+  const save = async (s: Service) => {
+    try { await mutations.upsertService(s); setEditing(null); toast.success("Serviço salvo."); }
+    catch (e: any) { toast.error(e.message); }
   };
-  const remove = (id: string) => { if (confirm("Excluir serviço?")) setServices(services.filter(s => s.id !== id)); };
+  const remove = async (id: string) => {
+    if (!confirm("Excluir serviço?")) return;
+    try { await mutations.deleteService(id); } catch (e: any) { toast.error(e.message); }
+  };
 
   const filtered = services.filter(s => filter === "all" || s.category_id === filter);
 

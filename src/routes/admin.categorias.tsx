@@ -3,10 +3,13 @@ import { useState } from "react";
 import { Plus, Trash2, Pencil, X } from "lucide-react";
 import { AdminShell, StatusBadge } from "@/components/admin-shell";
 import { useStore } from "@/lib/store";
+import { requireAdminBeforeLoad } from "@/lib/admin-guard";
 import { CategoryIcon, categoryIconNames } from "@/components/category-icon";
+import { toast } from "sonner";
 import type { Category } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/admin/categorias")({
+  beforeLoad: requireAdminBeforeLoad,
   head: () => ({ meta: [{ title: "Categorias — Admin" }] }),
   component: CategoriasAdmin,
 });
@@ -14,16 +17,20 @@ export const Route = createFileRoute("/admin/categorias")({
 const empty: Category = { id: "", name: "", icon: "Wrench", description: "", sort_order: 1, is_active: true };
 
 function CategoriasAdmin() {
-  const { categories, setCategories } = useStore();
+  const { categories, mutations } = useStore();
   const [editing, setEditing] = useState<Category | null>(null);
 
-  const save = (c: Category) => {
-    if (c.id) setCategories(categories.map(x => x.id === c.id ? c : x));
-    else setCategories([...categories, { ...c, id: `cat-${Date.now()}` }]);
-    setEditing(null);
+  const save = async (c: Category) => {
+    try { await mutations.upsertCategory(c); setEditing(null); toast.success("Categoria salva."); }
+    catch (e: any) { toast.error(e.message); }
   };
-  const remove = (id: string) => { if (confirm("Excluir categoria?")) setCategories(categories.filter(c => c.id !== id)); };
-  const toggle = (id: string) => setCategories(categories.map(c => c.id === id ? { ...c, is_active: !c.is_active } : c));
+  const remove = async (id: string) => {
+    if (!confirm("Excluir categoria?")) return;
+    try { await mutations.deleteCategory(id); } catch (e: any) { toast.error(e.message); }
+  };
+  const toggle = async (c: Category) => {
+    try { await mutations.upsertCategory({ ...c, is_active: !c.is_active }); } catch (e: any) { toast.error(e.message); }
+  };
 
   return (
     <AdminShell title="Categorias">
@@ -52,7 +59,7 @@ function CategoriasAdmin() {
             <p className="mt-3 text-sm text-muted-foreground">{c.description}</p>
             <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">
               <span>Ordem: {c.sort_order}</span>
-              <button onClick={() => toggle(c.id)} className="text-primary hover:underline">{c.is_active ? "Inativar" : "Ativar"}</button>
+              <button onClick={() => toggle(c)} className="text-primary hover:underline">{c.is_active ? "Inativar" : "Ativar"}</button>
             </div>
           </div>
         ))}

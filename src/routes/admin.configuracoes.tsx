@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AdminShell } from "@/components/admin-shell";
+import { requireAdminBeforeLoad } from "@/lib/admin-guard";
 
 export const Route = createFileRoute("/admin/configuracoes")({
   head: () => ({ meta: [{ title: "Configurações — Admin" }] }),
+  beforeLoad: requireAdminBeforeLoad,
   component: () => (
     <AdminShell title="Configurações">
       <div className="rounded-2xl border border-border bg-card p-6">
