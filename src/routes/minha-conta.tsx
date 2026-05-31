@@ -61,8 +61,6 @@ function MinhaContaPage() {
   }} />;
 }
 
-const fetchProfile = (() => null) as any; // placeholder for TS narrowing
-
 function MinhaContaContent({ email, onSignOut }: { email: string; onSignOut: () => void }) {
   const getProfile = useServerFn(getMyProfile);
   const updateProfile = useServerFn(updateMyProfile);
