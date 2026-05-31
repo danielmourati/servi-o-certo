@@ -90,7 +90,7 @@ export function HeroCarousel() {
         <div className="flex">
           {slides.map((s, i) => (
             <div key={i} className="relative min-w-0 flex-[0_0_100%]">
-              <div className="relative h-[420px] w-full overflow-hidden md:h-[480px]">
+              <div className="relative h-[300px] w-full overflow-hidden sm:h-[380px] md:h-[480px]">
                 <img
                   src={s.image}
                   alt={s.title}
@@ -101,23 +101,24 @@ export function HeroCarousel() {
                 <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
 
-                <div className="relative flex h-full flex-col justify-end p-6 text-white md:p-10">
-                  <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/25 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider backdrop-blur">
-                    <Sparkles className="h-3.5 w-3.5" /> {s.kicker}
+                <div className="relative flex h-full flex-col justify-end p-4 text-white sm:p-6 md:p-10">
+                  <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/25 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider backdrop-blur sm:px-3 sm:py-1.5 sm:text-xs">
+                    <Sparkles className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> {s.kicker}
                   </span>
-                  <h2 className="mt-4 max-w-[640px] font-display text-3xl font-extrabold leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] md:text-5xl">
+                  <h2 className="mt-3 max-w-[640px] font-display text-xl font-extrabold leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] sm:mt-4 sm:text-3xl md:text-5xl">
                     {s.title}
                   </h2>
-                  <p className="mt-3 max-w-[480px] text-base font-medium text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)] md:text-lg">
+                  <p className="mt-2 max-w-[480px] text-sm font-medium text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)] sm:mt-3 sm:text-base md:text-lg">
                     {s.copy}
                   </p>
                   <Link
                     to={s.to}
-                    className="mt-5 inline-flex h-12 w-fit items-center gap-2 rounded-2xl bg-white px-6 text-base font-bold text-blue-700 shadow-xl transition hover:bg-blue-50 active:scale-[0.97]"
+                    className="mt-4 inline-flex h-10 w-fit items-center gap-2 rounded-2xl bg-white px-4 text-sm font-bold text-blue-700 shadow-xl transition hover:bg-blue-50 active:scale-[0.97] sm:mt-5 sm:h-12 sm:px-6 sm:text-base"
                   >
                     {s.cta} <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
+
               </div>
             </div>
           ))}
