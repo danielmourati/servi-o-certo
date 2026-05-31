@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { BrandLogo } from "@/components/brand-logo";
 import { DesktopHeader } from "@/components/desktop-header";
 import { SiteFooter } from "@/components/site-footer";
+import { LgpdModal } from "@/components/lgpd-modal";
 import { supabase } from "@/integrations/supabase/client";
 
 export function AppTopBar({ title, subtitle }: { title?: string; subtitle?: string }) {
