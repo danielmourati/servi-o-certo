@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { CheckCircle2, MessageCircle, Home } from "lucide-react";
+import { useEffect, useState } from "react";
 import { PublicLayout } from "@/components/public-layout";
 import { useStore } from "@/lib/store";
-import { ADMIN_WHATSAPP } from "@/lib/mock-data";
+import { ADMIN_WHATSAPP, type ServiceRequest } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/sucesso/$id")({
   head: () => ({ meta: [{ title: "Solicitação enviada — ServiçosPRO" }] }),
@@ -11,14 +12,22 @@ export const Route = createFileRoute("/sucesso/$id")({
 
 function SucessoPage() {
   const { id } = useParams({ from: "/sucesso/$id" });
-  const { requests, services, categories } = useStore();
-  const req = requests.find(r => r.id === id);
+  const { services, categories } = useStore();
+  const [req, setReq] = useState<ServiceRequest | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(`req:${id}`);
+      if (raw) setReq(JSON.parse(raw));
+    } catch {}
+  }, [id]);
 
   if (!req) {
     return (
       <PublicLayout>
         <div className="mx-auto max-w-2xl px-4 py-20 text-center">
           <h1 className="font-display text-2xl font-semibold">Solicitação não encontrada</h1>
+          <p className="mt-2 text-sm text-muted-foreground">Protocolo: <span className="font-mono">{id}</span></p>
           <Link to="/" className="mt-4 inline-flex text-primary">Voltar ao início</Link>
         </div>
       </PublicLayout>
