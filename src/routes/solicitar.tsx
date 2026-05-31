@@ -33,19 +33,18 @@ function SolicitarPage() {
   const filteredServices = services.filter(s => s.category_id === categoryId && s.is_active);
   const activeCategories = categories.filter(c => c.is_active);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!categoryId || !serviceId) { toast.error("Selecione uma categoria e um serviço."); return; }
     if (!form.client_name || !form.client_phone) { toast.error("Preencha nome e telefone."); return; }
-    const id = `req-${Date.now()}`;
-    const newReq = {
-      id, service_id: serviceId, category_id: categoryId, ...form,
-      status: "Novo" as const, payment_status: "Pendente" as const, provider_id: null,
-      service_value: 0, provider_payment: 0, admin_notes: "",
-      created_at: new Date().toISOString(),
-    };
-    setRequests([newReq, ...requests]);
-    navigate({ to: "/sucesso/$id", params: { id } });
+    try {
+      const created = await mutations.createRequest({
+        service_id: serviceId, category_id: categoryId, ...form,
+      });
+      navigate({ to: "/sucesso/$id", params: { id: created.id } });
+    } catch (err: any) {
+      toast.error(err?.message ?? "Não foi possível enviar a solicitação.");
+    }
   };
 
   return (
