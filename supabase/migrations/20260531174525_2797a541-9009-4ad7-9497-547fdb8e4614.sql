@@ -1,0 +1,1 @@
+ALTER TABLE public.services ADD CONSTRAINT services_category_name_unique UNIQUE (category_id, name);
