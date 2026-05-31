@@ -1,0 +1,23 @@
+
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('branding', 'branding', true)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Branding files are publicly accessible"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'branding');
+
+CREATE POLICY "Admins can upload branding files"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'branding' AND public.has_role(auth.uid(), 'admin'));
+
+CREATE POLICY "Admins can update branding files"
+ON storage.objects FOR UPDATE
+TO authenticated
+USING (bucket_id = 'branding' AND public.has_role(auth.uid(), 'admin'));
+
+CREATE POLICY "Admins can delete branding files"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (bucket_id = 'branding' AND public.has_role(auth.uid(), 'admin'));
