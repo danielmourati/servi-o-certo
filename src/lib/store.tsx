@@ -5,7 +5,8 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 import { listCategories, upsertCategory, deleteCategory } from "./categories.functions";
 import { listServices, upsertService, deleteService } from "./services.functions";
