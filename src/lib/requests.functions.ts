@@ -7,19 +7,6 @@ const urgencyEnum = z.enum(["Normal", "Urgente", "Emergencial"]);
 const statusEnum = z.enum(["Novo","Em contato","Orçado","Atribuído","Em execução","Concluído","Cancelado"]);
 const paymentEnum = z.enum(["Pendente","Recebido","Pago ao prestador","Finalizado"]);
 
-const createRequestSchema = z.object({
-  service_id: z.string().uuid().nullable(),
-  category_id: z.string().uuid().nullable(),
-  client_name: z.string().min(1).max(200),
-  client_phone: z.string().min(1).max(50),
-  client_address: z.string().max(300).default(""),
-  client_neighborhood: z.string().max(150).default(""),
-  client_city: z.string().max(150).default(""),
-  preferred_date: z.string().max(50).default(""),
-  preferred_time: z.string().max: 50 = 50 as any, // placeholder removed below
-}).passthrough();
-
-// We'll redefine cleaner:
 const createRequestInput = z.object({
   service_id: z.string().uuid().nullable(),
   category_id: z.string().uuid().nullable(),
