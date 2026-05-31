@@ -4,7 +4,9 @@ import { z } from "zod";
 import { ArrowLeft } from "lucide-react";
 import { PublicLayout } from "@/components/public-layout";
 import { AuthRequiredModal } from "@/components/auth-required-modal";
+import { MaskedInput } from "@/components/ui/masked-input";
 import { useStore } from "@/lib/store";
+import { phoneSchema } from "@/lib/validators";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -106,7 +108,9 @@ function SolicitarPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!categoryId || !serviceId) { toast.error("Selecione uma categoria e um serviço."); return; }
-    if (!form.client_name || !form.client_phone) { toast.error("Preencha nome e telefone."); return; }
+    if (!form.client_name.trim()) { toast.error("Informe seu nome completo."); return; }
+    const phoneCheck = phoneSchema.safeParse(form.client_phone);
+    if (!phoneCheck.success) { toast.error(phoneCheck.error.issues[0]?.message ?? "Telefone inválido"); return; }
 
     // Auth gate
     if (!hasSession) {
@@ -131,14 +135,14 @@ function SolicitarPage() {
 
   return (
     <PublicLayout>
-      <div className="px-5 pt-2">
+      <div className="px-5 pt-2 md:px-0 md:mx-auto md:max-w-3xl">
         <Link to="/categorias" className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> Voltar
         </Link>
-        <h1 className="mt-3 font-display text-2xl font-bold">Solicitar orçamento</h1>
+        <h1 className="mt-3 font-display text-2xl font-bold md:text-3xl">Solicitar orçamento</h1>
         <p className="mt-1 text-sm text-muted-foreground">Preencha os dados e entraremos em contato pelo WhatsApp.</p>
 
-        <form onSubmit={submit} className="mt-5 space-y-4 rounded-3xl border border-border bg-card p-5 shadow-soft">
+        <form onSubmit={submit} className="mt-5 space-y-4 rounded-3xl border border-border bg-card p-5 shadow-soft md:p-7">
           <Field label="Categoria *">
             <select className="input" value={categoryId} onChange={(e) => { setCategoryId(e.target.value); setServiceId(""); }} required>
               <option value="">Selecione...</option>
@@ -155,7 +159,7 @@ function SolicitarPage() {
             <input className="input" value={form.client_name} onChange={(e) => setForm({ ...form, client_name: e.target.value })} required />
           </Field>
           <Field label="Telefone / WhatsApp *">
-            <input className="input" placeholder="(11) 99999-9999" value={form.client_phone} onChange={(e) => setForm({ ...form, client_phone: e.target.value })} required />
+            <MaskedInput mask="phone" value={form.client_phone} onChange={(v) => setForm({ ...form, client_phone: v })} placeholder="(11) 99999-9999" required className="input" />
           </Field>
           <Field label="Endereço">
             <input className="input" value={form.client_address} onChange={(e) => setForm({ ...form, client_address: e.target.value })} />
