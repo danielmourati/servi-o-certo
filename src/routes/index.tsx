@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, ShieldCheck, MessageCircle, Clock, Sparkles } from "lucide-react";
+import { ArrowRight, ShieldCheck, MessageCircle, Clock } from "lucide-react";
 import { PublicLayout } from "@/components/public-layout";
 import { CategoryIcon } from "@/components/category-icon";
+import { HeroCarousel } from "@/components/hero-carousel";
 import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/")({
@@ -22,28 +23,11 @@ function Index() {
 
   return (
     <PublicLayout>
-      {/* Hero card */}
+      {/* Hero carousel */}
       <section className="px-5 pt-4">
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-blue p-6 text-white shadow-card">
-          <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/15 blur-2xl" />
-          <div className="absolute -bottom-12 -left-8 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider">
-            <Sparkles className="h-3 w-3" /> Atendimento rápido
-          </span>
-          <h1 className="mt-4 font-display text-2xl font-bold leading-tight">
-            Serviços de confiança<br />perto de você
-          </h1>
-          <p className="mt-2 max-w-[260px] text-sm text-white/90">
-            Solicite reformas, reparos e manutenção em minutos pelo WhatsApp.
-          </p>
-          <Link
-            to="/solicitar"
-            className="mt-5 inline-flex h-11 items-center gap-2 rounded-2xl bg-white px-5 text-sm font-semibold text-blue-600 shadow-lg transition active:scale-[0.97]"
-          >
-            Solicitar agora <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
+        <HeroCarousel />
       </section>
+
 
       {/* Quick categories grid */}
       <section className="px-5 pt-7">
