@@ -123,17 +123,7 @@ function PrestadoresAdmin() {
   };
 
   const handleSaveProvider = async (formData: any) => {
-    // Keep local state in sync in case of fallback
-    if (isSupabaseError || !providersQuery.data) {
-      if (formData.id) {
-        localStore.setProviders(prev => prev.map(p => p.id === formData.id ? { ...formData, team: formData.team.map((t: any) => t.name).join(", "), availability: "Seg a Sex" } : p));
-      } else {
-        localStore.setProviders(prev => [...prev, { ...formData, id: `prov-${Date.now()}`, team: formData.team.map((t: any) => t.name).join(", "), availability: "Seg a Sex", internal_rating: 5.0, portfolio: [] }]);
-      }
-      toast.success("Salvo no armazenamento local (Modo de demonstração)");
-    } else {
-      await upsertMutation.mutateAsync(formData);
-    }
+    await upsertMutation.mutateAsync(formData);
   };
 
   return (
