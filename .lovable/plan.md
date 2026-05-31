@@ -1,62 +1,83 @@
-# Migração ServiçosPRO → Lovable Cloud (Supabase)
+## Objetivo
 
-Hoje todos os dados (`categories`, `services`, `providers`, `requests`) vivem em `localStorage` via `src/lib/store.tsx`. Vamos trocar essa camada por um backend real (Postgres + Auth + Server Functions), mantendo a mesma UI.
+Transformar a vitrine pública (home, categorias, detalhe, solicitar, sucesso) em uma experiência **mobile-first estilo aplicativo**, inspirada na referência enviada. Em telas grandes, o conteúdo fica centralizado num "device frame" (max ~440px), com fundo neutro nas laterais.
 
-## Etapas
+A área administrativa (`/admin/*`) **não é alterada**.
 
-### 1. Habilitar Lovable Cloud
-Aciono o tool `supabase--enable`. Isso provisiona Postgres, Auth e Storage automaticamente — sem você criar conta nem colar chaves. Depois disso os env vars `SUPABASE_*` e `VITE_SUPABASE_*` já existem no projeto.
+## Mudanças visuais (design system)
 
-### 2. Modelagem do banco (migration SQL)
-Criação das tabelas espelhando os tipos atuais em `src/lib/mock-data.ts`:
+Em `src/styles.css`:
+- Novo gradiente azul principal `--gradient-blue` (ex.: `#3B82F6 → #06B6D4`) — usado em botões CTA, badges e card de banner.
+- Tokens auxiliares: `--shadow-soft`, `--shadow-card`, `--radius` aumentado para `1.25rem` (cards bem arredondados).
+- Tipografia limpa mantida (Plus Jakarta + Inter).
+- Utilitários: `.bg-gradient-blue`, `.shadow-soft`, `.app-shell` (max-w-[440px] mx-auto bg-background min-h-screen com sombras laterais em telas grandes).
 
-- `categories` (id, name, slug, icon, description, order, active)
-- `services` (id, category_id FK, name, slug, description, base_price, active)
-- `providers` (id, name, document, phone, whatsapp, email, bio, photo_url, status, city, neighborhood, internal_rating) — **interno, nunca exposto ao público**
-- `provider_services` (provider_id, service_id) — N:N
-- `service_requests` (id, service_id, customer_name, customer_phone, address, urgency, description, status, service_value, provider_payment, assigned_provider_id, created_at, updated_at)
-- `user_roles` (user_id, role enum `admin`|`user`) + função `has_role()` SECURITY DEFINER (padrão obrigatório para evitar recursão de RLS e privilege escalation)
+## Novo layout público
 
-Cada tabela com `GRANT` explícito (`authenticated` + `service_role`; `anon` só onde for público) e `ENABLE ROW LEVEL SECURITY`.
+### `src/components/public-layout.tsx` (reescrito)
+- Remove header desktop / nav horizontal.
+- Wrapper `AppShell`: container centralizado `max-w-[440px]`, fundo cinza claro fora, fundo card dentro, sombra suave, padding-bottom para acomodar a tab bar.
+- **Top bar mobile**: localização "Olá!" + ícones (busca, notificação) — apenas visual.
+- **Bottom navigation fixa** (`MobileTabBar`) com 4 itens:
+  - Início (`/`)
+  - Categorias (`/categorias`)
+  - Solicitar (`/solicitar`) — botão central destacado em gradiente azul
+  - Entrar/Admin (`/entrar`)
+  - Item ativo em gradiente azul, com animação suave (scale/opacity).
 
-### 3. Políticas RLS
-- **Leitura pública (anon + authenticated)**: `categories`, `services` ativos.
-- **Inserção pública**: `service_requests` (qualquer visitante pode solicitar).
-- **Admin-only**: tudo em `providers`, `provider_services`, gestão de `service_requests`, edição de categorias/serviços — via `has_role(auth.uid(), 'admin')`.
-- `user_roles`: leitura própria + admin.
+### `src/routes/index.tsx` (home reescrita)
+Seguindo a referência:
+1. **Hero card** com gradiente azul e ilustração: título "Serviços de confiança", subtítulo, CTA "Solicitar agora" (botão branco com texto gradiente).
+2. **"Selecione uma categoria"** — grid 4 colunas de ícones circulares com label embaixo (todas as categorias ativas, scroll horizontal se passar de 8).
+3. **"Categorias em destaque"** — lista vertical de cards grandes com:
+   - Imagem ilustrativa (gradiente + ícone grande como placeholder).
+   - Nome, descrição curta, quantidade de serviços.
+   - Botão "Ver serviços" gradiente azul.
+4. **"Como funciona"** — 4 passos compactos em cards arredondados.
+5. **CTA final** em card gradiente azul.
 
-### 4. Autenticação
-Substituir o login mockado de `src/routes/entrar.tsx` por Supabase Auth (email/senha). Listener `onAuthStateChange` no root + cache invalidation. O painel `/admin/*` passa a viver sob um layout `_authenticated` que checa sessão + role `admin` em `beforeLoad` e redireciona para `/entrar`.
+**Nada de listagem de profissionais individuais** na home.
 
-Você criará o primeiro usuário admin manualmente (te oriento a inserir a role pelo SQL Editor após o signup).
+### `src/routes/categorias.index.tsx` (reescrita mobile-first)
+- Header "Categorias" com voltar.
+- Grid 2 colunas de cards arredondados grandes (ícone em círculo gradiente, nome, contagem de serviços), com tap animation (`active:scale-[0.97]`).
 
-### 5. Camada de dados (server functions)
-Criar arquivos em `src/lib/` (padrão `*.functions.ts`):
-- `categories.functions.ts` — list (público), upsert/delete (admin)
-- `services.functions.ts` — list por categoria (público), upsert/delete (admin)
-- `providers.functions.ts` — CRUD admin (já existe esqueleto, vou alinhar)
-- `requests.functions.ts` — create (público), list/update (admin, com cálculo de margem)
+### `src/routes/categorias.$id.tsx` (revisada)
+- Mantém a lógica; aplica visual app: card de categoria no topo, lista vertical de serviços com cards arredondados e botão "Solicitar".
 
-Reads públicos usam `supabaseAdmin` com WHERE escopado; reads/writes admin usam `requireSupabaseAuth` + checagem de role.
+### `src/routes/solicitar.tsx` e `src/routes/sucesso.$id.tsx`
+- Apenas ajustes visuais: padding generoso, cards arredondados, botão CTA em gradiente azul, sem alteração de lógica/serverFns.
 
-### 6. Refatorar o store
-`src/lib/store.tsx` deixa de usar `localStorage`. Cada página passa a usar **TanStack Query** (`useSuspenseQuery` + loaders com `ensureQueryData`) chamando as server functions. Isso já é o padrão recomendado do template.
+### `src/routes/entrar.tsx`
+- Mantém lógica de login; apenas visual app-style (card centralizado, botão gradiente).
 
-### 7. Wiring do bearer token
-Confirmar `attachSupabaseAuth` no `src/start.ts` (necessário para server functions protegidas reconhecerem o usuário).
+## Animações
 
-### 8. Seed inicial
-Migrar `initialCategories` / `initialServices` de `mock-data.ts` para um INSERT no banco, para a Home não ficar vazia. Pedidos e prestadores começam vazios.
+- Tailwind `transition-transform active:scale-[0.97] hover:-translate-y-0.5` nos cards.
+- Tab bar ativa com `transition-colors` e indicador gradiente.
+- Hero pulse sutil opcional (sem dependências novas, só Tailwind).
 
-### 9. Limpeza
-Remover `mock-data.ts` e o `StoreProvider` (ou deixar só os tipos compartilhados).
+## Comportamento responsivo
 
-## O que você precisa fazer
+- `< 440px`: ocupa tela inteira.
+- `≥ 440px`: container central com sombra lateral; o resto da viewport mostra fundo neutro (`bg-muted/40`).
+- Tab bar segue presa ao fundo do container (`fixed` no mobile, `sticky bottom-0` dentro do shell em desktop) — sempre visível.
 
-1. **Aprovar este plano** (botão "Implement plan").
-2. Após eu rodar a etapa 1, vou pedir sua confirmação antes de aplicar a migration SQL (etapa 2-3) — você revisa e clica "Apply".
-3. Depois da migration, **criar sua conta admin**: signup em `/entrar` e me avise o email — eu te passo o SQL para promover seu usuário a `admin`.
-4. Testar fluxo público (solicitar serviço) e painel admin.
+## Arquivos afetados
 
-## Fora de escopo desta migração
-Upload de imagens (Storage), notificações, integração financeira real, autenticação social — ficam para fases seguintes conforme o plano original do MVP.
+- `src/styles.css` — tokens de gradiente azul, sombras, raio.
+- `src/components/public-layout.tsx` — reescrito (AppShell + TabBar + TopBar).
+- `src/routes/index.tsx` — reescrito.
+- `src/routes/categorias.index.tsx` — reescrito.
+- `src/routes/categorias.$id.tsx` — refinado.
+- `src/routes/solicitar.tsx` — refinado visual.
+- `src/routes/sucesso.$id.tsx` — refinado visual.
+- `src/routes/entrar.tsx` — refinado visual.
+
+Nenhuma mudança em backend, server functions, schema ou rotas `/admin/*`.
+
+## Validação
+
+- Conferir preview a 390px (mobile) e 1280px (desktop centralizado).
+- Tab bar visível em todas as páginas públicas; rotas admin não exibem tab bar.
+- Categorias e contadores carregam do Supabase via `useStore()`.
