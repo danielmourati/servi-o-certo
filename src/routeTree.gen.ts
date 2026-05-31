@@ -18,8 +18,11 @@ import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SucessoIdRouteImport } from './routes/sucesso.$id'
 import { Route as CategoriasIdRouteImport } from './routes/categorias.$id'
 import { Route as AdminServicosRouteImport } from './routes/admin.servicos'
+import { Route as AdminPrestadoresRouteImport } from './routes/admin.prestadores'
 import { Route as AdminPedidosRouteImport } from './routes/admin.pedidos'
+import { Route as AdminFinanceiroRouteImport } from './routes/admin.financeiro'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminConfiguracoesRouteImport } from './routes/admin.configuracoes'
 import { Route as AdminCategoriasRouteImport } from './routes/admin.categorias'
 
 const SolicitarRoute = SolicitarRouteImport.update({
@@ -67,14 +70,29 @@ const AdminServicosRoute = AdminServicosRouteImport.update({
   path: '/admin/servicos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminPrestadoresRoute = AdminPrestadoresRouteImport.update({
+  id: '/admin/prestadores',
+  path: '/admin/prestadores',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminPedidosRoute = AdminPedidosRouteImport.update({
   id: '/admin/pedidos',
   path: '/admin/pedidos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFinanceiroRoute = AdminFinanceiroRouteImport.update({
+  id: '/admin/financeiro',
+  path: '/admin/financeiro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
   id: '/admin/dashboard',
   path: '/admin/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminConfiguracoesRoute = AdminConfiguracoesRouteImport.update({
+  id: '/admin/configuracoes',
+  path: '/admin/configuracoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminCategoriasRoute = AdminCategoriasRouteImport.update({
@@ -89,8 +107,11 @@ export interface FileRoutesByFullPath {
   '/entrar': typeof EntrarRoute
   '/solicitar': typeof SolicitarRoute
   '/admin/categorias': typeof AdminCategoriasRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/pedidos': typeof AdminPedidosRoute
+  '/admin/prestadores': typeof AdminPrestadoresRoute
   '/admin/servicos': typeof AdminServicosRoute
   '/categorias/$id': typeof CategoriasIdRoute
   '/sucesso/$id': typeof SucessoIdRoute
@@ -103,8 +124,11 @@ export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
   '/solicitar': typeof SolicitarRoute
   '/admin/categorias': typeof AdminCategoriasRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/pedidos': typeof AdminPedidosRoute
+  '/admin/prestadores': typeof AdminPrestadoresRoute
   '/admin/servicos': typeof AdminServicosRoute
   '/categorias/$id': typeof CategoriasIdRoute
   '/sucesso/$id': typeof SucessoIdRoute
@@ -118,8 +142,11 @@ export interface FileRoutesById {
   '/entrar': typeof EntrarRoute
   '/solicitar': typeof SolicitarRoute
   '/admin/categorias': typeof AdminCategoriasRoute
+  '/admin/configuracoes': typeof AdminConfiguracoesRoute
   '/admin/dashboard': typeof AdminDashboardRoute
+  '/admin/financeiro': typeof AdminFinanceiroRoute
   '/admin/pedidos': typeof AdminPedidosRoute
+  '/admin/prestadores': typeof AdminPrestadoresRoute
   '/admin/servicos': typeof AdminServicosRoute
   '/categorias/$id': typeof CategoriasIdRoute
   '/sucesso/$id': typeof SucessoIdRoute
@@ -134,8 +161,11 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/solicitar'
     | '/admin/categorias'
+    | '/admin/configuracoes'
     | '/admin/dashboard'
+    | '/admin/financeiro'
     | '/admin/pedidos'
+    | '/admin/prestadores'
     | '/admin/servicos'
     | '/categorias/$id'
     | '/sucesso/$id'
@@ -148,8 +178,11 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/solicitar'
     | '/admin/categorias'
+    | '/admin/configuracoes'
     | '/admin/dashboard'
+    | '/admin/financeiro'
     | '/admin/pedidos'
+    | '/admin/prestadores'
     | '/admin/servicos'
     | '/categorias/$id'
     | '/sucesso/$id'
@@ -162,8 +195,11 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/solicitar'
     | '/admin/categorias'
+    | '/admin/configuracoes'
     | '/admin/dashboard'
+    | '/admin/financeiro'
     | '/admin/pedidos'
+    | '/admin/prestadores'
     | '/admin/servicos'
     | '/categorias/$id'
     | '/sucesso/$id'
@@ -177,8 +213,11 @@ export interface RootRouteChildren {
   EntrarRoute: typeof EntrarRoute
   SolicitarRoute: typeof SolicitarRoute
   AdminCategoriasRoute: typeof AdminCategoriasRoute
+  AdminConfiguracoesRoute: typeof AdminConfiguracoesRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
+  AdminFinanceiroRoute: typeof AdminFinanceiroRoute
   AdminPedidosRoute: typeof AdminPedidosRoute
+  AdminPrestadoresRoute: typeof AdminPrestadoresRoute
   AdminServicosRoute: typeof AdminServicosRoute
   CategoriasIdRoute: typeof CategoriasIdRoute
   SucessoIdRoute: typeof SucessoIdRoute
@@ -251,6 +290,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminServicosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/prestadores': {
+      id: '/admin/prestadores'
+      path: '/admin/prestadores'
+      fullPath: '/admin/prestadores'
+      preLoaderRoute: typeof AdminPrestadoresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/pedidos': {
       id: '/admin/pedidos'
       path: '/admin/pedidos'
@@ -258,11 +304,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminPedidosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/financeiro': {
+      id: '/admin/financeiro'
+      path: '/admin/financeiro'
+      fullPath: '/admin/financeiro'
+      preLoaderRoute: typeof AdminFinanceiroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/dashboard': {
       id: '/admin/dashboard'
       path: '/admin/dashboard'
       fullPath: '/admin/dashboard'
       preLoaderRoute: typeof AdminDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/configuracoes': {
+      id: '/admin/configuracoes'
+      path: '/admin/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AdminConfiguracoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/categorias': {
@@ -281,8 +341,11 @@ const rootRouteChildren: RootRouteChildren = {
   EntrarRoute: EntrarRoute,
   SolicitarRoute: SolicitarRoute,
   AdminCategoriasRoute: AdminCategoriasRoute,
+  AdminConfiguracoesRoute: AdminConfiguracoesRoute,
   AdminDashboardRoute: AdminDashboardRoute,
+  AdminFinanceiroRoute: AdminFinanceiroRoute,
   AdminPedidosRoute: AdminPedidosRoute,
+  AdminPrestadoresRoute: AdminPrestadoresRoute,
   AdminServicosRoute: AdminServicosRoute,
   CategoriasIdRoute: CategoriasIdRoute,
   SucessoIdRoute: SucessoIdRoute,
@@ -292,3 +355,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
