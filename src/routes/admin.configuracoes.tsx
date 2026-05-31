@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useEffect, useState } from "react";
-import { Building2, Phone, Mail, MapPin, DollarSign, Bell, Palette, Plug, Save, Loader2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Building2, Phone, Mail, MapPin, DollarSign, Bell, Palette, Plug, Save, Loader2, Upload } from "lucide-react";
 import { AdminShell } from "@/components/admin-shell";
 import { requireAdminBeforeLoad } from "@/lib/admin-guard";
 import { getSettings, updateSettings } from "@/lib/settings.functions";
@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { MaskedInput } from "@/components/ui/masked-input";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/configuracoes")({
@@ -60,6 +62,8 @@ function SettingsPage() {
   const [form, setForm] = useState<SettingsForm>(empty);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchSettings()
@@ -92,6 +96,35 @@ function SettingsPage() {
     }
   }
 
+  async function handleLogoUpload(file: File) {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Imagem deve ter no máximo 2MB");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "png";
+      const path = `logo-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("branding").upload(path, file, {
+        cacheControl: "3600",
+        upsert: true,
+      });
+      if (error) throw error;
+      const { data } = supabase.storage.from("branding").getPublicUrl(path);
+      update("logo_url", data.publicUrl);
+      toast.success("Logo enviado com sucesso!");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Falha no upload");
+    } finally {
+      setUploading(false);
+      if (logoInputRef.current) logoInputRef.current.value = "";
+    }
+  }
+
   return (
     <AdminShell title="Configurações">
       {loading ? (
@@ -105,10 +138,52 @@ function SettingsPage() {
               <Input value={form.company_name} onChange={(e) => update("company_name", e.target.value)} />
             </Field>
             <Field label="CNPJ / Documento">
-              <Input value={form.company_document} onChange={(e) => update("company_document", e.target.value)} />
+              <MaskedInput
+                mask="cnpj"
+                value={form.company_document}
+                onChange={(v) => update("company_document", v)}
+                placeholder="00.000.000/0000-00"
+              />
             </Field>
-            <Field label="URL do logo">
-              <Input placeholder="https://..." value={form.logo_url} onChange={(e) => update("logo_url", e.target.value)} />
+            <Field label="URL do logo" className="md:col-span-2">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="https://..."
+                  value={form.logo_url}
+                  onChange={(e) => update("logo_url", e.target.value)}
+                  className="flex-1"
+                />
+                <input
+                  ref={logoInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleLogoUpload(f);
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={uploading}
+                  onClick={() => logoInputRef.current?.click()}
+                >
+                  {uploading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="mr-2 h-4 w-4" />
+                  )}
+                  Upload
+                </Button>
+              </div>
+              {form.logo_url && (
+                <img
+                  src={form.logo_url}
+                  alt="Pré-visualização do logo"
+                  className="mt-2 h-12 w-auto rounded-md border border-border bg-background p-1"
+                />
+              )}
             </Field>
             <Field label="Horário de atendimento">
               <Input value={form.business_hours} onChange={(e) => update("business_hours", e.target.value)} />
@@ -117,10 +192,20 @@ function SettingsPage() {
 
           <Section icon={Phone} title="Contato e WhatsApp" description="Canal de comunicação com clientes.">
             <Field label="Telefone fixo">
-              <Input value={form.company_phone} onChange={(e) => update("company_phone", e.target.value)} />
+              <MaskedInput
+                mask="phone"
+                value={form.company_phone}
+                onChange={(v) => update("company_phone", v)}
+                placeholder="(11) 3000-0000"
+              />
             </Field>
             <Field label="WhatsApp de atendimento">
-              <Input placeholder="(11) 99999-9999" value={form.support_whatsapp} onChange={(e) => update("support_whatsapp", e.target.value)} />
+              <MaskedInput
+                mask="phone"
+                value={form.support_whatsapp}
+                onChange={(v) => update("support_whatsapp", v)}
+                placeholder="(11) 99999-9999"
+              />
             </Field>
             <Field label="E-mail de contato">
               <Input type="email" value={form.company_email} onChange={(e) => update("company_email", e.target.value)} />

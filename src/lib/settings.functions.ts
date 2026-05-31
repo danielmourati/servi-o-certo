@@ -54,6 +54,18 @@ export const getSettings = createServerFn({ method: "GET" })
     return data;
   });
 
+export const getPublicSettings = createServerFn({ method: "GET" }).handler(async () => {
+  const { data, error } = await supabaseAdmin
+    .from("app_settings")
+    .select(
+      "company_name, company_email, company_phone, support_whatsapp, company_address, company_city, business_hours, logo_url",
+    )
+    .eq("id", "default")
+    .maybeSingle();
+  if (error) return null;
+  return data;
+});
+
 export const updateSettings = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => settingsSchema.parse(input))
