@@ -9,11 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SolicitarRouteImport } from './routes/solicitar'
+import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CategoriasIndexRouteImport } from './routes/categorias.index'
+import { Route as SucessoIdRouteImport } from './routes/sucesso.$id'
 import { Route as CategoriasIdRouteImport } from './routes/categorias.$id'
 
+const SolicitarRoute = SolicitarRouteImport.update({
+  id: '/solicitar',
+  path: '/solicitar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ComoFuncionaRoute = ComoFuncionaRouteImport.update({
   id: '/como-funciona',
   path: '/como-funciona',
@@ -29,6 +42,11 @@ const CategoriasIndexRoute = CategoriasIndexRouteImport.update({
   path: '/categorias/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SucessoIdRoute = SucessoIdRouteImport.update({
+  id: '/sucesso/$id',
+  path: '/sucesso/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CategoriasIdRoute = CategoriasIdRouteImport.update({
   id: '/categorias/$id',
   path: '/categorias/$id',
@@ -38,39 +56,87 @@ const CategoriasIdRoute = CategoriasIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/entrar': typeof EntrarRoute
+  '/solicitar': typeof SolicitarRoute
   '/categorias/$id': typeof CategoriasIdRoute
+  '/sucesso/$id': typeof SucessoIdRoute
   '/categorias/': typeof CategoriasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/entrar': typeof EntrarRoute
+  '/solicitar': typeof SolicitarRoute
   '/categorias/$id': typeof CategoriasIdRoute
+  '/sucesso/$id': typeof SucessoIdRoute
   '/categorias': typeof CategoriasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/como-funciona': typeof ComoFuncionaRoute
+  '/entrar': typeof EntrarRoute
+  '/solicitar': typeof SolicitarRoute
   '/categorias/$id': typeof CategoriasIdRoute
+  '/sucesso/$id': typeof SucessoIdRoute
   '/categorias/': typeof CategoriasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/como-funciona' | '/categorias/$id' | '/categorias/'
+  fullPaths:
+    | '/'
+    | '/como-funciona'
+    | '/entrar'
+    | '/solicitar'
+    | '/categorias/$id'
+    | '/sucesso/$id'
+    | '/categorias/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/como-funciona' | '/categorias/$id' | '/categorias'
-  id: '__root__' | '/' | '/como-funciona' | '/categorias/$id' | '/categorias/'
+  to:
+    | '/'
+    | '/como-funciona'
+    | '/entrar'
+    | '/solicitar'
+    | '/categorias/$id'
+    | '/sucesso/$id'
+    | '/categorias'
+  id:
+    | '__root__'
+    | '/'
+    | '/como-funciona'
+    | '/entrar'
+    | '/solicitar'
+    | '/categorias/$id'
+    | '/sucesso/$id'
+    | '/categorias/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ComoFuncionaRoute: typeof ComoFuncionaRoute
+  EntrarRoute: typeof EntrarRoute
+  SolicitarRoute: typeof SolicitarRoute
   CategoriasIdRoute: typeof CategoriasIdRoute
+  SucessoIdRoute: typeof SucessoIdRoute
   CategoriasIndexRoute: typeof CategoriasIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/solicitar': {
+      id: '/solicitar'
+      path: '/solicitar'
+      fullPath: '/solicitar'
+      preLoaderRoute: typeof SolicitarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/como-funciona': {
       id: '/como-funciona'
       path: '/como-funciona'
@@ -92,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriasIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sucesso/$id': {
+      id: '/sucesso/$id'
+      path: '/sucesso/$id'
+      fullPath: '/sucesso/$id'
+      preLoaderRoute: typeof SucessoIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/categorias/$id': {
       id: '/categorias/$id'
       path: '/categorias/$id'
@@ -105,7 +178,10 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ComoFuncionaRoute: ComoFuncionaRoute,
+  EntrarRoute: EntrarRoute,
+  SolicitarRoute: SolicitarRoute,
   CategoriasIdRoute: CategoriasIdRoute,
+  SucessoIdRoute: SucessoIdRoute,
   CategoriasIndexRoute: CategoriasIndexRoute,
 }
 export const routeTree = rootRouteImport
