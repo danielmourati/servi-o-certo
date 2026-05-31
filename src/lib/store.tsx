@@ -21,6 +21,13 @@ export function formatBRL(v: number) {
 
 export function useStore() {
   const qc = useQueryClient();
+  const [hasSession, setHasSession] = useState(false);
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setHasSession(!!data.session));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => setHasSession(!!s));
+    return () => subscription.unsubscribe();
+  }, []);
+
 
   const listCategoriesFn = useServerFn(listCategories);
   const listServicesFn = useServerFn(listServices);
