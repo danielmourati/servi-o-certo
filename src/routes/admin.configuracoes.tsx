@@ -96,6 +96,35 @@ function SettingsPage() {
     }
   }
 
+  async function handleLogoUpload(file: File) {
+    if (!file.type.startsWith("image/")) {
+      toast.error("Selecione um arquivo de imagem");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Imagem deve ter no máximo 2MB");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "png";
+      const path = `logo-${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("branding").upload(path, file, {
+        cacheControl: "3600",
+        upsert: true,
+      });
+      if (error) throw error;
+      const { data } = supabase.storage.from("branding").getPublicUrl(path);
+      update("logo_url", data.publicUrl);
+      toast.success("Logo enviado com sucesso!");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Falha no upload");
+    } finally {
+      setUploading(false);
+      if (logoInputRef.current) logoInputRef.current.value = "";
+    }
+  }
+
   return (
     <AdminShell title="Configurações">
       {loading ? (
