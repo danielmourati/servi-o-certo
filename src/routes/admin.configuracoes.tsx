@@ -138,10 +138,52 @@ function SettingsPage() {
               <Input value={form.company_name} onChange={(e) => update("company_name", e.target.value)} />
             </Field>
             <Field label="CNPJ / Documento">
-              <Input value={form.company_document} onChange={(e) => update("company_document", e.target.value)} />
+              <MaskedInput
+                mask="cnpj"
+                value={form.company_document}
+                onChange={(v) => update("company_document", v)}
+                placeholder="00.000.000/0000-00"
+              />
             </Field>
-            <Field label="URL do logo">
-              <Input placeholder="https://..." value={form.logo_url} onChange={(e) => update("logo_url", e.target.value)} />
+            <Field label="URL do logo" className="md:col-span-2">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="https://..."
+                  value={form.logo_url}
+                  onChange={(e) => update("logo_url", e.target.value)}
+                  className="flex-1"
+                />
+                <input
+                  ref={logoInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    if (f) handleLogoUpload(f);
+                  }}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={uploading}
+                  onClick={() => logoInputRef.current?.click()}
+                >
+                  {uploading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Upload className="mr-2 h-4 w-4" />
+                  )}
+                  Upload
+                </Button>
+              </div>
+              {form.logo_url && (
+                <img
+                  src={form.logo_url}
+                  alt="Pré-visualização do logo"
+                  className="mt-2 h-12 w-auto rounded-md border border-border bg-background p-1"
+                />
+              )}
             </Field>
             <Field label="Horário de atendimento">
               <Input value={form.business_hours} onChange={(e) => update("business_hours", e.target.value)} />
@@ -150,10 +192,20 @@ function SettingsPage() {
 
           <Section icon={Phone} title="Contato e WhatsApp" description="Canal de comunicação com clientes.">
             <Field label="Telefone fixo">
-              <Input value={form.company_phone} onChange={(e) => update("company_phone", e.target.value)} />
+              <MaskedInput
+                mask="phone"
+                value={form.company_phone}
+                onChange={(v) => update("company_phone", v)}
+                placeholder="(11) 3000-0000"
+              />
             </Field>
             <Field label="WhatsApp de atendimento">
-              <Input placeholder="(11) 99999-9999" value={form.support_whatsapp} onChange={(e) => update("support_whatsapp", e.target.value)} />
+              <MaskedInput
+                mask="phone"
+                value={form.support_whatsapp}
+                onChange={(v) => update("support_whatsapp", v)}
+                placeholder="(11) 99999-9999"
+              />
             </Field>
             <Field label="E-mail de contato">
               <Input type="email" value={form.company_email} onChange={(e) => update("company_email", e.target.value)} />
