@@ -3,18 +3,20 @@ import { useMemo, useState } from "react";
 import { Search, X, MessageCircle, Filter } from "lucide-react";
 import { AdminShell, StatusBadge } from "@/components/admin-shell";
 import { useStore, formatBRL } from "@/lib/store";
+import { requireAdminBeforeLoad } from "@/lib/admin-guard";
 import type { RequestStatus, PaymentStatus, ServiceRequest } from "@/lib/mock-data";
 
 const STATUSES: RequestStatus[] = ["Novo", "Em contato", "Orçado", "Atribuído", "Em execução", "Concluído", "Cancelado"];
 const PAY_STATUSES: PaymentStatus[] = ["Pendente", "Recebido", "Pago ao prestador", "Finalizado"];
 
 export const Route = createFileRoute("/admin/pedidos")({
+  beforeLoad: requireAdminBeforeLoad,
   head: () => ({ meta: [{ title: "Pedidos — Admin" }] }),
   component: PedidosPage,
 });
 
 function PedidosPage() {
-  const { requests, services, categories, providers, setRequests } = useStore();
+  const { requests, services, categories, providers, mutations } = useStore();
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selected, setSelected] = useState<string | null>(null);
@@ -34,7 +36,7 @@ function PedidosPage() {
 
   const update = (patch: Partial<ServiceRequest>) => {
     if (!current) return;
-    setRequests(requests.map(r => r.id === current.id ? { ...r, ...patch } : r));
+    mutations.updateRequest(current.id, patch);
   };
 
   return (
