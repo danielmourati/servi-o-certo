@@ -3,9 +3,11 @@ import { useState, useMemo } from "react";
 import { DollarSign, TrendingUp, TrendingDown, Wallet } from "lucide-react";
 import { AdminShell, StatusBadge } from "@/components/admin-shell";
 import { useStore, formatBRL } from "@/lib/store";
+import { requireAdminBeforeLoad } from "@/lib/admin-guard";
 
 export const Route = createFileRoute("/admin/financeiro")({
   head: () => ({ meta: [{ title: "Financeiro — Admin" }] }),
+  beforeLoad: requireAdminBeforeLoad,
   component: FinanceiroAdmin,
 });
 

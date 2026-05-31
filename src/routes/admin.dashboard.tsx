@@ -4,9 +4,11 @@ import {
 } from "lucide-react";
 import { AdminShell, StatusBadge } from "@/components/admin-shell";
 import { useStore, formatBRL } from "@/lib/store";
+import { requireAdminBeforeLoad } from "@/lib/admin-guard";
 
 export const Route = createFileRoute("/admin/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — ServiçosPRO Admin" }] }),
+  beforeLoad: requireAdminBeforeLoad,
   component: Dashboard,
 });
 
