@@ -3,13 +3,14 @@ import { useMemo, useState } from "react";
 import { Search, X, MessageCircle, Filter } from "lucide-react";
 import { AdminShell, StatusBadge } from "@/components/admin-shell";
 import { useStore, formatBRL } from "@/lib/store";
+import { requireAdminBeforeLoad } from "@/lib/admin-guard";
 import type { RequestStatus, PaymentStatus, ServiceRequest } from "@/lib/mock-data";
 
 const STATUSES: RequestStatus[] = ["Novo", "Em contato", "Orçado", "Atribuído", "Em execução", "Concluído", "Cancelado"];
 const PAY_STATUSES: PaymentStatus[] = ["Pendente", "Recebido", "Pago ao prestador", "Finalizado"];
 
 export const Route = createFileRoute("/admin/pedidos")({
-  beforeLoad: (await import("@/lib/admin-guard")).requireAdminBeforeLoad,
+  beforeLoad: requireAdminBeforeLoad,
   head: () => ({ meta: [{ title: "Pedidos — Admin" }] }),
   component: PedidosPage,
 });
