@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          business_hours: string
+          company_address: string
+          company_city: string
+          company_document: string
+          company_email: string
+          company_name: string
+          company_phone: string
+          created_at: string
+          default_commission_pct: number
+          id: string
+          logo_url: string
+          notify_email: string
+          notify_new_request: boolean
+          primary_color: string
+          support_whatsapp: string
+          updated_at: string
+          whatsapp_api_token: string
+          whatsapp_api_url: string
+        }
+        Insert: {
+          business_hours?: string
+          company_address?: string
+          company_city?: string
+          company_document?: string
+          company_email?: string
+          company_name?: string
+          company_phone?: string
+          created_at?: string
+          default_commission_pct?: number
+          id?: string
+          logo_url?: string
+          notify_email?: string
+          notify_new_request?: boolean
+          primary_color?: string
+          support_whatsapp?: string
+          updated_at?: string
+          whatsapp_api_token?: string
+          whatsapp_api_url?: string
+        }
+        Update: {
+          business_hours?: string
+          company_address?: string
+          company_city?: string
+          company_document?: string
+          company_email?: string
+          company_name?: string
+          company_phone?: string
+          created_at?: string
+          default_commission_pct?: number
+          id?: string
+          logo_url?: string
+          notify_email?: string
+          notify_new_request?: boolean
+          primary_color?: string
+          support_whatsapp?: string
+          updated_at?: string
+          whatsapp_api_token?: string
+          whatsapp_api_url?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           created_at: string
