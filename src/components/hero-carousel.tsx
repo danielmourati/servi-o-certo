@@ -90,27 +90,30 @@ export function HeroCarousel() {
         <div className="flex">
           {slides.map((s, i) => (
             <div key={i} className="relative min-w-0 flex-[0_0_100%]">
-              <div className="relative h-[360px] w-full overflow-hidden">
+              <div className="relative h-[420px] w-full overflow-hidden md:h-[480px]">
                 <img
                   src={s.image}
                   alt={s.title}
                   loading={i === 0 ? "eager" : "lazy"}
                   className="absolute inset-0 h-full w-full object-cover"
                 />
-                <div className={`absolute inset-0 bg-gradient-to-tr ${s.accent}`} />
-                <div className="absolute inset-0 bg-gradient-to-t from-blue-950/85 via-blue-900/30 to-transparent" />
+                {/* Dark scrim only for text legibility — no blue tint */}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
 
-                <div className="relative flex h-full flex-col justify-end p-6 text-white">
-                  <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider backdrop-blur">
-                    <Sparkles className="h-3 w-3" /> {s.kicker}
+                <div className="relative flex h-full flex-col justify-end p-6 text-white md:p-10">
+                  <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-white/25 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider backdrop-blur">
+                    <Sparkles className="h-3.5 w-3.5" /> {s.kicker}
                   </span>
-                  <h2 className="mt-3 font-display text-2xl font-extrabold leading-tight drop-shadow-md">
+                  <h2 className="mt-4 max-w-[640px] font-display text-3xl font-extrabold leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)] md:text-5xl">
                     {s.title}
                   </h2>
-                  <p className="mt-2 max-w-[300px] text-sm text-white/90">{s.copy}</p>
+                  <p className="mt-3 max-w-[480px] text-base font-medium text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.7)] md:text-lg">
+                    {s.copy}
+                  </p>
                   <Link
                     to={s.to}
-                    className="mt-4 inline-flex h-11 w-fit items-center gap-2 rounded-2xl bg-white px-5 text-sm font-bold text-blue-700 shadow-lg transition active:scale-[0.97]"
+                    className="mt-5 inline-flex h-12 w-fit items-center gap-2 rounded-2xl bg-white px-6 text-base font-bold text-blue-700 shadow-xl transition hover:bg-blue-50 active:scale-[0.97]"
                   >
                     {s.cta} <ArrowRight className="h-4 w-4" />
                   </Link>
