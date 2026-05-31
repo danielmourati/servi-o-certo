@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, Facebook, Linkedin, MessageCircle, Mail, MapPin, Phone } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
+import { LgpdModal } from "@/components/lgpd-modal";
 
 export function SiteFooter() {
   const year = new Date().getFullYear();
