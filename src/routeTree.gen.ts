@@ -14,6 +14,7 @@ import { Route as EntrarRouteImport } from './routes/entrar'
 import { Route as ComoFuncionaRouteImport } from './routes/como-funciona'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CategoriasIndexRouteImport } from './routes/categorias.index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SucessoIdRouteImport } from './routes/sucesso.$id'
 import { Route as CategoriasIdRouteImport } from './routes/categorias.$id'
 
@@ -42,6 +43,11 @@ const CategoriasIndexRoute = CategoriasIndexRouteImport.update({
   path: '/categorias/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SucessoIdRoute = SucessoIdRouteImport.update({
   id: '/sucesso/$id',
   path: '/sucesso/$id',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/solicitar': typeof SolicitarRoute
   '/categorias/$id': typeof CategoriasIdRoute
   '/sucesso/$id': typeof SucessoIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/categorias/': typeof CategoriasIndexRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/solicitar': typeof SolicitarRoute
   '/categorias/$id': typeof CategoriasIdRoute
   '/sucesso/$id': typeof SucessoIdRoute
+  '/admin': typeof AdminIndexRoute
   '/categorias': typeof CategoriasIndexRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/solicitar': typeof SolicitarRoute
   '/categorias/$id': typeof CategoriasIdRoute
   '/sucesso/$id': typeof SucessoIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/categorias/': typeof CategoriasIndexRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/solicitar'
     | '/categorias/$id'
     | '/sucesso/$id'
+    | '/admin/'
     | '/categorias/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/solicitar'
     | '/categorias/$id'
     | '/sucesso/$id'
+    | '/admin'
     | '/categorias'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/solicitar'
     | '/categorias/$id'
     | '/sucesso/$id'
+    | '/admin/'
     | '/categorias/'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   SolicitarRoute: typeof SolicitarRoute
   CategoriasIdRoute: typeof CategoriasIdRoute
   SucessoIdRoute: typeof SucessoIdRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   CategoriasIndexRoute: typeof CategoriasIndexRoute
 }
 
@@ -158,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriasIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sucesso/$id': {
       id: '/sucesso/$id'
       path: '/sucesso/$id'
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   SolicitarRoute: SolicitarRoute,
   CategoriasIdRoute: CategoriasIdRoute,
   SucessoIdRoute: SucessoIdRoute,
+  AdminIndexRoute: AdminIndexRoute,
   CategoriasIndexRoute: CategoriasIndexRoute,
 }
 export const routeTree = rootRouteImport
