@@ -2,8 +2,9 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   LayoutDashboard, ClipboardList, FolderTree, Hammer, Users,
-  DollarSign, Settings, Wrench, Menu, X, LogOut, Bell,
+  DollarSign, Settings, Menu, X, LogOut, Bell,
 } from "lucide-react";
+import logoUrl from "@/assets/logo.png";
 
 const navItems = [
   { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -70,8 +71,8 @@ function SidebarContent({ path, onNavigate }: { path: string; onNavigate?: () =>
     <>
       <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-5">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-brand text-white"><Wrench className="h-4 w-4" /></div>
-          <span className="font-display text-base font-bold text-white">Serviços<span className="text-primary">PRO</span></span>
+          <img src={logoUrl} alt="KebraGalho" className="h-8 w-8 object-contain" />
+          <span className="font-display text-base font-bold text-white">Kebra<span className="text-primary">Galho</span></span>
         </Link>
         {onNavigate && <button onClick={onNavigate} className="md:hidden"><X className="h-5 w-5" /></button>}
       </div>

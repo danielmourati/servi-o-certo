@@ -1,18 +1,17 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, LayoutGrid, PlusCircle, UserCircle2, Wrench } from "lucide-react";
+import { Home, LayoutGrid, PlusCircle, UserCircle2 } from "lucide-react";
 import type { ReactNode } from "react";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function AppTopBar({ title, subtitle }: { title?: string; subtitle?: string }) {
   return (
     <header className="sticky top-0 z-30 bg-card/80 px-5 pt-5 pb-3 backdrop-blur">
       <div className="flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-blue text-white shadow-blue">
-            <Wrench className="h-4 w-4" />
-          </div>
+          <BrandLogo size="sm" showText={false} />
           <div className="leading-tight">
             <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{subtitle ?? "Olá, bem-vindo"}</div>
-            <div className="font-display text-sm font-bold">{title ?? "ServiçosPRO"}</div>
+            <div className="font-display text-sm font-bold text-gradient-blue">{title ?? "KebraGalho"}</div>
           </div>
         </Link>
       </div>

@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { Wrench, ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 import { useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,8 +60,8 @@ function EntrarPage() {
     <div className="app-bg flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md">
         <Link to="/" className="mb-6 flex items-center justify-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-blue text-white shadow-blue"><Wrench className="h-5 w-5" /></div>
-          <span className="font-display text-xl font-bold">Serviços<span className="text-gradient-blue">PRO</span></span>
+          <BrandLogo size="md" showText={false} />
+          <span className="font-display text-xl font-bold text-gradient-blue">KebraGalho</span>
         </Link>
         <div className="rounded-3xl border border-border bg-card p-8 shadow-card">
           <h1 className="font-display text-2xl font-bold">
