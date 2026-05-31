@@ -136,10 +136,10 @@
 
 @layer utilities {
   .bg-gradient-brand {
-    background-image: linear-gradient(135deg, oklch(0.74 0.16 165), oklch(0.63 0.18 258));
+    background-image: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%);
   }
   .text-gradient-brand {
-    background-image: linear-gradient(135deg, oklch(0.74 0.16 165), oklch(0.63 0.18 258));
+    background-image: linear-gradient(135deg, #3B82F6 0%, #06B6D4 100%);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
